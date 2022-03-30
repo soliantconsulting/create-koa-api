@@ -27,6 +27,6 @@
         "semantic-release-license": "^1.0.3"
     },
     "scripts": {
-        "release": "semantic-release --no-ci"
+        "release": "HUSKY=0 semantic-release --no-ci"
     }
 }
