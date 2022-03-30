@@ -15,7 +15,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@github.com/carafe-fm/carafe-bundle-create.git"
+        "url": "ssh://git@versions.soliantconsulting.com:7999/swr/create-koa-api.git"
     },
     "devDependencies": {
         "@commitlint/cli": "^16.2.3",
