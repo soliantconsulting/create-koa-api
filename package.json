@@ -1,0 +1,30 @@
+{
+    "name": "@soliantconsulting/create-koa-api",
+    "version": "1.0.0",
+    "description": "Create a Koa API",
+    "author": "Soliant Consulting",
+    "license": "MIT",
+    "bin": {
+        "create-koa-api": "./index.mjs"
+    },
+    "dependencies": {
+        "chalk": "^5.0.1",
+        "copy-dir": "^1.3.0",
+        "meow": "^10.1.2",
+        "prompts": "^2.2.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/carafe-fm/carafe-bundle-create.git"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^16.2.3",
+        "@commitlint/config-conventional": "^16.2.1",
+        "husky": "^7.0.4",
+        "semantic-release": "^19.0.2",
+        "semantic-release-license": "^1.0.3"
+    },
+    "scripts": {
+        "release": "semantic-release"
+    }
+}
