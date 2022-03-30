@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.0.1...v1.0.2) (2022-03-30)
+
+
+### Bug Fixes
+
+* **init:** rename gitignore files after init ([e1196e7](https://versions.soliantconsulting.com/swr/create-koa-api/commit/e1196e7dd490e196b66844328bc2593a44959d0c))
+
 ## [1.0.1](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.0.0...v1.0.1) (2022-03-30)
 
 
