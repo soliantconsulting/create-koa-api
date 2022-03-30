@@ -27,6 +27,6 @@
         "semantic-release-license": "^1.0.3"
     },
     "scripts": {
-        "release": "semantic-release"
+        "release": "semantic-release --no-ci"
     }
 }
