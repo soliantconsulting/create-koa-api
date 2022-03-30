@@ -85,6 +85,10 @@ const extractTemplate = async (root, config) => {
         },
         mode: true,
     });
+
+    if (config.useCdk) {
+        await fs.rename(path.join(root, 'cdk', '.npmignore.dist'), path.join(root, 'cdk', '.npmignore'));
+    }
 };
 
 const installPackages = async (cwd) => {
