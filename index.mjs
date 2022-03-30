@@ -86,8 +86,11 @@ const extractTemplate = async (root, config) => {
         mode: true,
     });
 
+    await fs.rename(path.join(root, '.gitignore.dist'), path.join(root, '.gitignore'));
+
     if (config.useCdk) {
         await fs.rename(path.join(root, 'cdk', '.npmignore.dist'), path.join(root, 'cdk', '.npmignore'));
+        await fs.rename(path.join(root, 'cdk', '.gitignore.dist'), path.join(root, 'cdk', '.gitignore'));
     }
 };
 
