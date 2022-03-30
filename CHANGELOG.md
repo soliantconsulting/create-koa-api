@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.0.0...v1.0.1) (2022-03-30)
+
+
+### Bug Fixes
+
+* **init:** use dist .npmignore file to avoid exclusion during package publishing ([9dc3db2](https://versions.soliantconsulting.com/swr/create-koa-api/commit/9dc3db2646fd7130e629d6ee936f212a088cdbfc))
+
 # 1.0.0 (2022-03-30)
 
 
