@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.0.3...v1.0.4) (2022-03-31)
+
+
+### Bug Fixes
+
+* **init:** update usage text ([c473601](https://versions.soliantconsulting.com/swr/create-koa-api/commit/c4736012b2bd2f791e2912b8b576b64ce66625fd))
+
 ## [1.0.3](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.0.2...v1.0.3) (2022-03-31)
 
 

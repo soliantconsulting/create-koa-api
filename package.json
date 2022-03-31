@@ -1,6 +1,6 @@
 {
     "name": "@soliantconsulting/create-koa-api",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Create a Koa API",
     "author": "Soliant Consulting",
     "license": "MIT",
