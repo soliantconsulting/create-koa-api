@@ -13,7 +13,7 @@ import {fileURLToPath} from 'node:url';
 const cli = meow(`
   Usage
 
-    $ npm init @soliant/koa-api [api-name|-v|--version|-h|--help]
+    $ npm init @soliantconsulting/koa-api [api-name|-v|--version|-h|--help]
 `, {
         booleanDefault: undefined,
         flags: {
