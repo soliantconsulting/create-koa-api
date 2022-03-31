@@ -27,7 +27,10 @@ export class CiCdStack extends Stack {
             'SourceBucket',
             '{{ source-bucket-name }}',
         );
-        const sourceObjectKey = '{{ source-bucket-key }}';
+        /**
+         * @todo Fill in your repository values. By default, branch should be "main".
+         */
+        const sourceObjectKey = '{{ project-key }}/{{ repository-name }}/{{ branch }}.zip';
 
         /**
          * @todo Create a DockerHub secret in the secrets manager with the properties "username" and "secret".
