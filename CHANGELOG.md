@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.1.0](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.0.4...v1.1.0) (2022-03-31)
+
+
+### Features
+
+* **cdk:** use more descriptive placeholders for sourceObjectKey ([850829a](https://versions.soliantconsulting.com/swr/create-koa-api/commit/850829aa4f37dc1f69b040d014113a720bc135c6))
+
 ## [1.0.4](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.0.3...v1.0.4) (2022-03-31)
 
 
