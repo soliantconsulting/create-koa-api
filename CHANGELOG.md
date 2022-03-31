@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.0.2...v1.0.3) (2022-03-31)
+
+
+### Bug Fixes
+
+* **template:** update README.md instructions for CDK deployment ([0d8d336](https://versions.soliantconsulting.com/swr/create-koa-api/commit/0d8d3365227cb07a38a724811e8ae71d399ac85f))
+
 ## [1.0.2](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.0.1...v1.0.2) (2022-03-30)
 
 
