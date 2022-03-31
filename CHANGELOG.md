@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.1.0...v1.1.1) (2022-03-31)
+
+
+### Bug Fixes
+
+* **init:** remove SSM client package when not using SSM ([567ea63](https://versions.soliantconsulting.com/swr/create-koa-api/commit/567ea63780a0c71707089f7625d8f507273a1a70))
+
 # [1.1.0](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.0.4...v1.1.0) (2022-03-31)
 
 
