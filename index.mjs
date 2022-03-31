@@ -30,13 +30,13 @@ const cli = meow(`
     },
 );
 
-const runGitCommand = async (cwd, args) => {
-    await new Promise((resolve, reject) => {
-        const child = spawn('git', args, {cwd, stdio: 'inherit'});
+const runCommand = async (cwd, command, args) => {
+    return new Promise((resolve, reject) => {
+        const child = spawn(command, args, {cwd, stdio: 'inherit'});
 
         child.on('close', code => {
             if (code !== 0) {
-                reject({command: `git ${args.join(' ')}`});
+                reject({command: `${command} ${args.join(' ')}`});
                 return;
             }
 
@@ -55,7 +55,7 @@ const createRoot = async (root) => {
     }
 
     await fs.mkdir(root, {recursive: true});
-    await runGitCommand(root, ['init', '.']);
+    await runCommand(root, 'git', ['init', '.']);
 };
 
 const asyncCopyDir = promisify(copyDir);
@@ -92,21 +92,6 @@ const extractTemplate = async (root, config) => {
         await fs.rename(path.join(root, 'cdk', '.npmignore.dist'), path.join(root, 'cdk', '.npmignore'));
         await fs.rename(path.join(root, 'cdk', '.gitignore.dist'), path.join(root, 'cdk', '.gitignore'));
     }
-};
-
-const installPackages = async (cwd) => {
-    return new Promise((resolve, reject) => {
-        const child = spawn('npm', ['install'], {cwd, stdio: 'inherit'});
-
-        child.on('close', code => {
-            if (code !== 0) {
-                reject({command: `npm install`});
-                return;
-            }
-
-            resolve();
-        });
-    });
 };
 
 const escapeRegExp = (string) => {
@@ -204,20 +189,24 @@ const performReplacements = async (root, config) => {
 
     console.log();
     console.log(chalk.blue('Install root packages…'));
-    await installPackages(root);
+    await runCommand(root, 'npm', ['install']);
+
+    if (!config.useSsm) {
+        await runCommand(root, 'npm', ['r', '@aws-sdk/client-ssm']);
+    }
 
     if (config.useCdk) {
         console.log();
         console.log(chalk.blue('Install CDK packages…'));
-        await installPackages(path.join(root, 'cdk'));
+        await runCommand(path.join(root, 'cdk'), 'npm', ['install']);
     } else {
         await replaceInFile(path.join(root, '.eslintignore'), {'/cdk\n': ''});
     }
 
     console.log();
     console.log(chalk.blue('Creating setup commit…'));
-    await runGitCommand(root, ['add', '-A']);
-    await runGitCommand(root, ['commit', '-am', 'feat: project setup']);
+    await runCommand(root, 'git', ['add', '-A']);
+    await runCommand(root, 'git', ['commit', '-am', 'feat: project setup']);
 
     console.log();
     console.log(chalk.green('Setup complete!'));
