@@ -31,6 +31,7 @@ export const serverPromise = (async () => {
                     hint: error.message,
                     errors: Array.isArray(error.errors) ? error.errors : undefined,
                 };
+                return;
             }
 
             context.status = 500;
