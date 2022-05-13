@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.1.1...v1.1.2) (2022-05-13)
+
+
+### Bug Fixes
+
+* **template:** return after setting exposed error on body ([908453e](https://versions.soliantconsulting.com/swr/create-koa-api/commit/908453e0b441fe1fe428e5fc9e6da1dabba69eef))
+
 ## [1.1.1](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.1.0...v1.1.1) (2022-03-31)
 
 
