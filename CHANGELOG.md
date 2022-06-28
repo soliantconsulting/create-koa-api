@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.2.0](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.1.2...v1.2.0) (2022-06-28)
+
+
+### Features
+
+* **template:** update cdk dependencies to latest versions ([807640b](https://versions.soliantconsulting.com/swr/create-koa-api/commit/807640b78b1f7dadd48897963a5edf6f88c8d96a))
+
 ## [1.1.2](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.1.1...v1.1.2) (2022-05-13)
 
 
