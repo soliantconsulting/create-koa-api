@@ -13,4 +13,4 @@ RUN npm ci --only=production --ignore-scripts
 COPY --from=0 /usr/app/dist .
 COPY ecosystem.config.js .
 RUN npm install pm2 -g
-CMD ["pm2-runtime", "ecosystem.config.js", "--env", "production"]
+CMD ["pm2-runtime", "ecosystem.config.cjs", "--env", "production"]

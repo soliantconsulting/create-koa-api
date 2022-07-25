@@ -129,6 +129,7 @@ const performReplacements = async (root, config) => {
         '~~description~~': config.description,
     });
     await replaceInFile(path.join(root, 'README.md'), {
+        '{{ name }}': config.apiName,
         '{{ description }}': config.description,
     });
     await toggleBlock(path.join(root, 'README.md'), 'ssm', config.useSsm);

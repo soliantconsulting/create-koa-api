@@ -1,3 +1,5 @@
+import {dirname} from 'path';
+import {fileURLToPath} from 'url';
 import {compositeRouter} from '../util/koa';
 
-export default compositeRouter(__dirname);
+export default await compositeRouter(dirname(fileURLToPath(import.meta.url)));

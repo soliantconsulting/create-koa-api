@@ -2,6 +2,7 @@ module.exports = {
     apps: [{
         name: 'api',
         script: `${process.env.PWD}/index.js`,
+        node_args: '--experimental-specifier-resolution=node',
         watch: false,
         autorestart: true,
         restart_delay: 1000,

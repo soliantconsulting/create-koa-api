@@ -21,11 +21,3 @@ export const parseQuery = <T extends z.ZodType<unknown>>(schema : T, context : C
 
     return result.data;
 };
-
-export const zTrim = (value : unknown) : unknown => {
-    if (typeof value === 'string') {
-        return value.trim();
-    }
-
-    return value;
-};

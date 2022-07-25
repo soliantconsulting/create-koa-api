@@ -6,4 +6,6 @@ const configSchema = z.object({
     foo: z.string(),
 });
 
-export const getConfig = createSingletonConfigGetter(new SSM({}), configSchema, process.env.SSM_PREFIX);
+const getConfig = createSingletonConfigGetter(new SSM({}), configSchema, process.env.SSM_PREFIX);
+
+export default await getConfig();
