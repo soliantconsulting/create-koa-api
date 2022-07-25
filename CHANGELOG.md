@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.3.0](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.2.0...v1.3.0) (2022-07-25)
+
+
+### Features
+
+* **template:** add ESM support ([86bfd10](https://versions.soliantconsulting.com/swr/create-koa-api/commit/86bfd10d0cc7d100da75fd03b8a78fc2d873f53e))
+
 # [1.2.0](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.1.2...v1.2.0) (2022-06-28)
 
 
