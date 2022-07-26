@@ -3,8 +3,8 @@
 ## Setup
 
 - `npm install`
-- copy `ssm-config.json.dist` to `ssm-config.json`
-- `npm start`
+/* block:start:ssm */- copy `ssm-config.json.dist` to `ssm-config.json`
+/* block:end:ssm */- `npm start`
 /* block:start:ssm */
 ## SSM parameters
 
