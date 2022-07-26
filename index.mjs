@@ -207,7 +207,7 @@ const performReplacements = async (root, config) => {
     console.log();
     console.log(chalk.blue('Creating setup commit…'));
     await runCommand(root, 'git', ['add', '-A']);
-    await runCommand(root, 'git', ['commit', '-am', 'feat: project setup']);
+    await runCommand(root, 'git', ['commit', '-am', '"feat: project setup"']);
 
     console.log();
     console.log(chalk.green('Setup complete!'));
