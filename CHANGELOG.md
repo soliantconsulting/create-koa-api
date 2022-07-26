@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.3.0...v1.3.1) (2022-07-26)
+
+
+### Bug Fixes
+
+* enable shell for child processes, fixes windows compatibility ([26c64ba](https://versions.soliantconsulting.com/swr/create-koa-api/commit/26c64ba48c8adaf15f8f8b55da1374ad558b48aa))
+* **template:** use file protocol URLs for composite router ([b73ef18](https://versions.soliantconsulting.com/swr/create-koa-api/commit/b73ef18d832d3b44da858f2a7370e49efd967a61))
+
 # [1.3.0](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.2.0...v1.3.0) (2022-07-25)
 
 
