@@ -11,6 +11,6 @@ WORKDIR /usr/app
 COPY package*.json ./
 RUN npm ci --only=production --ignore-scripts
 COPY --from=0 /usr/app/dist .
-COPY ecosystem.config.js .
+COPY ecosystem.config.cjs .
 RUN npm install pm2 -g
 CMD ["pm2-runtime", "ecosystem.config.cjs", "--env", "production"]
