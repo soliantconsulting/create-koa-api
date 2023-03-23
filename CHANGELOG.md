@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.4.0...v1.4.1) (2023-03-23)
+
+
+### Bug Fixes
+
+* correct lint errors ([01796d3](https://versions.soliantconsulting.com/swr/create-koa-api/commit/01796d3a57256868663bab923838fe44d0872aa8))
+
 # [1.4.0](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.3.2...v1.4.0) (2023-03-23)
 
 
