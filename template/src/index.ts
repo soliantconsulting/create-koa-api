@@ -1,13 +1,12 @@
-import Router from 'koa-tree-router';
 import * as zlib from 'zlib';
 import cors from '@koa/cors';
 import {isHttpError} from 'http-errors';
 import gracefulShutdown from 'http-graceful-shutdown';
-import {getReasonPhrase} from 'http-status-codes';
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import cacheControl from 'koa-cache-control';
 import compress from 'koa-compress';
+import Router from 'koa-tree-router';
 import {registerRoutes} from './route/index.js';
 import {logger} from './util/winston.js';
 
