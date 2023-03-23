@@ -1,3 +1,4 @@
+import Router from 'koa-tree-router';
 import * as zlib from 'zlib';
 import cors from '@koa/cors';
 import {isHttpError} from 'http-errors';
@@ -7,8 +8,8 @@ import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import cacheControl from 'koa-cache-control';
 import compress from 'koa-compress';
-import compositeRouter from './route';
-import {logger} from './util/winston';
+import {registerRoutes} from './route/index.js';
+import {logger} from './util/winston.js';
 
 const app = new Koa();
 
@@ -26,9 +27,9 @@ app.use(async (context, next) => {
             context.status = error.status;
             context.body = {
                 status: error.status,
-                message: getReasonPhrase(error.status),
-                hint: error.message,
-                errors: Array.isArray(error.errors) ? error.errors : undefined,
+                message: error.message,
+                error: error.name,
+                validationErrors: Array.isArray(error.errors) ? error.errors : undefined,
             };
             return;
         }
@@ -52,7 +53,7 @@ app.use(compress({
     },
 }));
 
-app.use((context, next) => {
+app.use(async (context, next) => {
     if (context.url === '/health') {
         context.body = {status: 'alive'};
         return;
@@ -61,8 +62,12 @@ app.use((context, next) => {
     return next();
 });
 
-app.use(compositeRouter.routes());
-app.use(compositeRouter.allowedMethods());
+const router = new Router({onMethodNotAllowed: context => {
+    context.status = 405;
+}});
+
+registerRoutes(router);
+app.use(router.routes());
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const server = app.listen(port, process.env.HOST);

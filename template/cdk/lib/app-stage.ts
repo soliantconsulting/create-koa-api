@@ -1,7 +1,7 @@
 import type {StageProps} from 'aws-cdk-lib';
 import {Stage} from 'aws-cdk-lib';
 import type {Construct} from 'constructs';
-import {ServiceStack} from './service-stack';
+import {ServiceStack} from './service-stack.js';
 
 type AppStageProps = StageProps & {
     certificateArn : string;

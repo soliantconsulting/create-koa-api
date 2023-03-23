@@ -12,7 +12,7 @@ import {
     ShellStep,
 } from 'aws-cdk-lib/pipelines';
 import type {Construct} from 'constructs';
-import {AppStage} from './app-stage';
+import {AppStage} from './app-stage.js';
 
 export class CiCdStack extends Stack {
     public constructor(scope : Construct, id : string, props ?: StackProps) {

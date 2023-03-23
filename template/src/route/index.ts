@@ -1,5 +1,6 @@
-import {dirname} from 'path';
-import {fileURLToPath} from 'url';
-import {compositeRouter} from '../util/koa';
+import type Router from 'koa-tree-router';
+import {registerHelloWorldRoutes} from './hello-world/index.js';
 
-export default await compositeRouter(dirname(fileURLToPath(import.meta.url)));
+export const registerRoutes = (router : Router) : void => {
+    registerHelloWorldRoutes(router);
+};

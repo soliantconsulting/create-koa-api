@@ -193,7 +193,7 @@ const performReplacements = async (root, config) => {
     await runCommand(root, 'npm', ['install']);
 
     if (!config.useSsm) {
-        await runCommand(root, 'npm', ['r', '@aws-sdk/client-ssm']);
+        await runCommand(root, 'npm', ['r', '@aws-sdk/client-ssm', 'ssm-config-loader']);
     }
 
     if (config.useCdk) {
