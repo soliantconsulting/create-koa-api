@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.4.0](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.3.2...v1.4.0) (2023-03-23)
+
+
+### Features
+
+* update all dependencies ([5547425](https://versions.soliantconsulting.com/swr/create-koa-api/commit/5547425bfd895ed0b1d46a07c47d194bd3a7c991))
+
 ## [1.3.2](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.3.1...v1.3.2) (2022-07-26)
 
 
