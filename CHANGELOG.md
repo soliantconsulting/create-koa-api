@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.0.0...v2.0.1) (2024-01-19)
+
+
+### Bug Fixes
+
+* **cli:** add node shebang ([54eccd6](https://github.com/soliantconsulting/create-koa-api/commit/54eccd67690a25cd54509a3525e2602e3a25087e))
+
 # [2.0.0](https://github.com/soliantconsulting/create-koa-api/compare/v1.4.1...v2.0.0) (2024-01-19)
 
 
