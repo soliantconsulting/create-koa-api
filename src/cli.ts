@@ -242,7 +242,7 @@ const tasks = new Listr<Context>(
                     ],
                     { cwd: context.apiName },
                 );
-                await execute(task.stdout(), "node", ["node_modules/.bin/lefthook", "install"], {
+                await execute(task.stdout(), "npx", ["lefthook", "install"], {
                     cwd: context.apiName,
                 });
                 await execute(task.stdout(), "git", ["push", "-fu", "origin", "main"], {
