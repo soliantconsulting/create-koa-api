@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.0.1...v2.1.0) (2024-01-19)
+
+
+### Features
+
+* **skeleton:** add JSON:API hint to README.md ([24bf738](https://github.com/soliantconsulting/create-koa-api/commit/24bf738420c4bddd627b2fd88a5cc85b9115c660))
+
 ## [2.0.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.0.0...v2.0.1) (2024-01-19)
 
 
