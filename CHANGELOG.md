@@ -22,8 +22,6 @@
 
 * This requires Git hosting on Bitbucket Cloud.
 
-# Changelog
-
 ## [1.4.1](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.4.0...v1.4.1) (2023-03-23)
 
 
