@@ -1,3 +1,20 @@
+# [2.0.0](https://github.com/soliantconsulting/create-koa-api/compare/v1.4.1...v2.0.0) (2024-01-19)
+
+
+### Bug Fixes
+
+* **cli:** use npx to run lefthook install ([a3cf5b9](https://github.com/soliantconsulting/create-koa-api/commit/a3cf5b94ed3465edc84251749418b0078394d06d))
+
+
+### Features
+
+* refactor project to utilize Bitbucket Pipelines ([bbe845b](https://github.com/soliantconsulting/create-koa-api/commit/bbe845be3a90b2191c55011d59da06797d542415))
+
+
+### BREAKING CHANGES
+
+* This requires Git hosting on Bitbucket Cloud.
+
 # Changelog
 
 ## [1.4.1](https://versions.soliantconsulting.com/swr/create-koa-api/compare/v1.4.0...v1.4.1) (2023-03-23)
