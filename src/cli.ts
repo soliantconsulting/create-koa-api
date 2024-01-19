@@ -257,9 +257,12 @@ const tasks = new Listr<Context>(
 try {
     await tasks.run();
 
-    logger.log(ListrLogLevels.COMPLETED, 'Project creation successful, you must run the pipeline manually once.');
-    logger.log(ListrLogLevels.COMPLETED, 'You can find additional code snippets here:');
-    logger.log(ListrLogLevels.COMPLETED, 'https://github.com/soliantconsulting/koa-api-recipes');
+    logger.log(
+        ListrLogLevels.COMPLETED,
+        "Project creation successful, you must run the pipeline manually once.",
+    );
+    logger.log(ListrLogLevels.COMPLETED, "You can find additional code snippets here:");
+    logger.log(ListrLogLevels.COMPLETED, "https://github.com/soliantconsulting/koa-api-recipes");
 } catch (error) {
     logger.log(ListrLogLevels.FAILED, error as string);
 }
