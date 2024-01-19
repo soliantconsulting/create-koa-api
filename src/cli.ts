@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { fileURLToPath } from "url";
 import { ACM, CertificateStatus } from "@aws-sdk/client-acm";
 import { CloudFormation } from "@aws-sdk/client-cloudformation";

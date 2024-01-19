@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { rm } from "fs/promises";
 import meow from "meow";
 import "source-map-support/register.js";
