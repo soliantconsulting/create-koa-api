@@ -1,0 +1,154 @@
+import { fileURLToPath } from "url";
+import { Duration, Stack, type StackProps } from "aws-cdk-lib";
+import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+import {
+    InstanceClass,
+    InstanceSize,
+    InstanceType,
+    IpAddresses,
+    SubnetType,
+    Vpc,
+} from "aws-cdk-lib/aws-ec2";
+import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
+import { Cluster, ContainerImage } from "aws-cdk-lib/aws-ecs";
+import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
+import { Effect, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import {
+    AuroraPostgresEngineVersion,
+    ClientPasswordAuthType,
+    Credentials,
+    DatabaseCluster,
+    DatabaseClusterEngine,
+    DatabaseProxy,
+    ProxyTarget,
+} from "aws-cdk-lib/aws-rds";
+import { ClusterInstance } from "aws-cdk-lib/aws-rds";
+import type { Construct } from "constructs";
+
+type ApiStackProps = StackProps & {
+    certificateArn: string;
+{{#if (has features "ssm")}}
+    ssmPrefix: string;
+{{/if}}
+};
+
+export class ApiStack extends Stack {
+    public constructor(scope: Construct, id: string, props: ApiStackProps) {
+        super(scope, id, props);
+
+        const vpc = new Vpc(this, "Vpc", {
+            ipAddresses: IpAddresses.cidr("172.10.0.0/16"),
+            subnetConfiguration: [
+                {
+                    name: "Public",
+                    subnetType: SubnetType.PUBLIC,
+                },
+{{#if (has features "postgres")}}
+                {
+                    name: "Private",
+                    subnetType: SubnetType.PRIVATE_WITH_EGRESS,
+                },
+{{/if}}
+            ],
+            maxAzs: 2,
+        });
+{{#if (has features "postgres")}}
+
+        const databaseCluster = new DatabaseCluster(this, "Database", {
+            engine: DatabaseClusterEngine.auroraPostgres({
+                version: AuroraPostgresEngineVersion.VER_16_0,
+            }),
+            credentials: Credentials.fromGeneratedSecret("api"),
+            writer: ClusterInstance.provisioned("DatabaseWriter", {
+                instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.MEDIUM),
+            }),
+            vpc,
+            defaultDatabaseName: "api",
+        });
+
+        if (!databaseCluster.secret) {
+            throw new Error("Database cluster has nio secret attached");
+        }
+
+        const databaseProxy = new DatabaseProxy(this, "DatabaseProxy", {
+            vpc,
+            proxyTarget: ProxyTarget.fromCluster(databaseCluster),
+            secrets: [databaseCluster.secret],
+            clientPasswordAuthType: ClientPasswordAuthType.POSTGRES_SCRAM_SHA_256,
+        });
+{{/if}}
+        const cluster = new Cluster(this, "Cluster", {
+            vpc,
+        });
+
+        const asset = new DockerImageAsset(this, "App", {
+            directory: fileURLToPath(new URL("../../", import.meta.url)),
+            exclude: ["cdk"],
+        });
+
+        const certificate = Certificate.fromCertificateArn(
+            this,
+            "Certificate",
+            props.certificateArn,
+        );
+
+        const taskRole = new Role(this, "TaskRole", {
+            assumedBy: new ServicePrincipal("ecs-tasks.amazonaws.com"),
+        });
+{{#if (has features "postgres")}}
+
+        databaseCluster.secret.grantRead(taskRole);
+{{/if}}
+{{#if (has features "ssm")}}
+
+        taskRole.addToPolicy(
+            new PolicyStatement({
+                effect: Effect.ALLOW,
+                actions: ["ssm:GetParametersByPath"],
+                resources: [
+                    `arn:aws:ssm:${this.region}:${this.account}:parameter${props.ssmPrefix}`,
+                ],
+            }),
+        );
+{{/if}}
+
+        const albService = new ApplicationLoadBalancedFargateService(this, "Service", {
+            cluster,
+            cpu: 512,
+            memoryLimitMiB: 1024,
+            taskImageOptions: {
+                containerName: "app",
+                containerPort: 80,
+                image: ContainerImage.fromDockerImageAsset(asset),
+                environment: {
+                    PORT: "80",
+{{#if (has features "ssm")}}
+                    SSM_PREFIX: props.ssmPrefix,
+{{/if}}
+{{#if (has features "postgres")}}
+                    POSTGRES_HOSTNAME: databaseProxy.endpoint,
+                    POSTGRES_PORT: databaseCluster.clusterEndpoint.port.toString(),
+                    POSTGRES_SECRET: databaseCluster.secret.secretArn,
+{{/if}}
+                },
+                taskRole,
+            },
+            certificate: certificate,
+            assignPublicIp: true,
+            publicLoadBalancer: true,
+            healthCheckGracePeriod: Duration.seconds(10),
+        });
+
+        const serviceScaling = albService.service.autoScaleTaskCount({ maxCapacity: 10 });
+        serviceScaling.scaleOnCpuUtilization("ScalingCpu", {
+            targetUtilizationPercent: 60,
+        });
+
+        albService.targetGroup.setAttribute("deregistration_delay.timeout_seconds", "30");
+
+        albService.targetGroup.configureHealthCheck({
+            enabled: true,
+            path: "/health",
+        });
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "$schema": "https://biomejs.dev/schemas/1.5.2/schema.json",
+    "organizeImports": {
+        "enabled": true
+    },
+    "files": {
+        "include": [
+            "biome.json",
+            "commitlint.config.cjs",
+            "ecosystem.config.cjs",
+            "cdk/src/**/*",
+            "src/**/*"
+        ],
+        "ignore": ["cdk/cdk.out/**/*"]
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "nursery": {
+                "useImportType": "error",
+                "noUnusedImports": "error"
+            }
+        }
+    },
+    "formatter": {
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 100
+    }
+}

@@ -1,0 +1,78 @@
+image: node:20-alpine
+
+definitions:
+  caches:
+    cdk-node:
+      key:
+        files:
+          - cdk/package-lock.json
+      path: cdk/node_modules
+
+pipelines:
+  branches:
+    main:
+      - parallel:
+          steps:
+            - step:
+                name: Biome
+                runs-on:
+                  - 'self.hosted'
+                  - 'linux'
+                script:
+                  - CI=true npm install
+                  - npx biome ci .
+                caches:
+                  - node
+            - step:
+                name: Type check
+                runs-on:
+                  - 'self.hosted'
+                  - 'linux'
+                script:
+                  - CI=true npm install
+                  - npx tsc --noEmit
+                caches:
+                  - node
+      - step:
+          name: Deploy UAT
+          runs-on:
+            - 'self.hosted'
+            - 'linux'
+          deployment: staging
+          oidc: true
+          services:
+            - docker
+          caches:
+            - cdk-node
+            - docker
+          script:
+            - export AWS_REGION={{{region}}}
+            - export AWS_ROLE_ARN={{{deployRoleArn}}}
+            - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
+            - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
+            - cd cdk
+            - npm install
+            - npm run build
+            - npx cdk deploy --app dist/env-uat.js --require-approval never
+      - step:
+          name: Deploy production
+          runs-on:
+            - 'self.hosted'
+            - 'linux'
+          deployment: production
+          trigger: manual
+          oidc: true
+          services:
+            - docker
+          caches:
+            - cdk-node
+            - docker
+          script:
+            - export AWS_REGION={{{region}}}
+            - export AWS_ROLE_ARN={{{deployRoleArn}}}
+            - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
+            - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
+            - cd cdk
+            - npm install
+            - npm run build
+            - npx cdk deploy --app dist/env-prod.js --require-approval never

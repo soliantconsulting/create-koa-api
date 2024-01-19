@@ -1,0 +1,22 @@
+{
+    "devDependencies": {
+        "@mikro-orm/cli": "^6.0.0",
+        "sql-formatter": "^15.0.0"
+    },
+    "dependencies": {
+        "@aws-sdk/client-secrets-manager": "^3.0.0",
+        "@mikro-orm/core": "^6.0.0",
+        "@mikro-orm/postgresql": "^6.0.0",
+        "@mikro-orm/migrations": "^6.0.0",
+        "@sindresorhus/fnv1a": "^3.1.0"
+    },
+    "scripts": {
+        "mikro-orm": "tsx ./node_modules/.bin/mikro-orm-esm"
+    },
+    "mikro-orm": {
+        "configPaths": [
+            "./src/mikro-orm.config.ts",
+            "./mikro-orm.config.js"
+        ]
+    }
+}

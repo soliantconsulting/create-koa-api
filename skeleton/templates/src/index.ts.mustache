@@ -1,0 +1,134 @@
+import * as zlib from "zlib";
+import cors from "@koa/cors";
+import { isHttpError } from "http-errors";
+import gracefulShutdown from "http-graceful-shutdown";
+import Koa from "koa";
+import bodyParser from "koa-bodyparser";
+import cacheControl from "koa-cache-control";
+import compress from "koa-compress";
+import Router from "koa-tree-router";
+import "source-map-support/register.js";
+import { registerRoutes } from "./route/index.js";
+import { orm, requestContextMiddleware } from "./util/mikro-orm.js";
+import { logger } from "./util/winston.js";
+import { ZodValidationError } from "./util/zod.js";
+
+const app = new Koa();
+
+app.use(cacheControl({ noStore: true }));
+
+app.use(async (context, next) => {
+    try {
+        await next();
+    } catch (error) {
+        if (isHttpError(error) && error.expose) {
+            context.status = error.status;
+            context.body = {
+                errors: [
+                    {
+                        status: error.status.toString(),
+                        code: error.name
+                            .replace(/Error$/, "")
+                            .replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`),
+                        title: error.message,
+                    },
+                ],
+            };
+            return;
+        }
+
+        if (error instanceof ZodValidationError) {
+            context.status = error.status;
+            context.body = {
+                errors: error.toJsonApiErrors(),
+            };
+            return;
+        }
+
+        context.status = 500;
+        context.body = {
+            errors: [
+                {
+                    status: "500",
+                    code: "internal_server_error",
+                    title: "Internal Server Error",
+                },
+            ],
+        };
+        logger.error(error instanceof Error ? error.stack : error);
+    } finally {
+        if (context.response.type === "application/json") {
+            context.set("Content-Type", "application/vnd.api+json");
+        }
+    }
+});
+
+app.use(bodyParser());
+app.use(cors({ maxAge: 86400 }));
+app.use(
+    compress({
+        br: {
+            params: {
+                [zlib.constants.BROTLI_PARAM_QUALITY]: 1,
+            },
+        },
+    }),
+);
+
+app.use(async (context, next) => {
+    if (context.url === "/health") {
+        context.body = { status: "alive" };
+        return;
+    }
+
+    return next();
+});
+{{#if (has features "postgres")}}
+
+app.use(requestContextMiddleware);
+{{/if}}
+
+const router = new Router({
+    onMethodNotAllowed: (context) => {
+        if (context.response.headers.allow === "") {
+            context.remove("allow");
+            context.response.headers.allow = undefined;
+            context.status = 404;
+            context.body = {
+                errors: [
+                    {
+                        status: "404",
+                        code: "not_found",
+                        title: "Resource not found",
+                    },
+                ],
+            };
+            return;
+        }
+
+        context.status = 405;
+        context.body = {
+            errors: [
+                {
+                    status: "405",
+                    code: "method_not_allowed",
+                    title: "Method not allowed",
+                    detail: `Allowed methods: ${context.response.headers.allow}`,
+                },
+            ],
+        };
+    },
+});
+
+registerRoutes(router);
+app.use(router.routes());
+
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const server = app.listen(port, process.env.HOST);
+
+gracefulShutdown(server{{#if usePostgres}}, {
+    onShutdown: async () => {
+        await orm.close();
+    },
+}{{/if}});
+logger.info(`Server started on port ${port}`);

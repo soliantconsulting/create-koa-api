@@ -1,0 +1,33 @@
+# {{{apiName}}}
+
+## Setup
+
+- `npm install`
+{{#if (has features "ssm")}}
+- copy `ssm-config.json.dist` to `ssm-config.json`
+{{/if}}
+{{#if (has features "postgres")}}
+- run `docker compose up -d`
+{{/if}}
+- `npm start`
+{{#if (has features "ssm")}}
+
+## SSM parameters
+
+This project comes with SSM preconfigured. You can set up your SSM keys with the following prefixes in AWS:
+
+- `{{{apiName}}}/uat/*`
+- `{{{apiName}}}/prod/*`
+
+For local development, the file `ssm-config.json.dist` and `ssm-config.json` should reflect the same tree structure.
+{{/if}}
+{{#if (has features "ssm")}}
+
+## Postgres
+
+Use the MikroORM CLI to create and run migrations:
+
+```bash
+npm run mikro-orm help
+```
+{{/if}}
