@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 
+import path from "path";
 import { fileURLToPath } from "url";
 import { ACM, CertificateStatus } from "@aws-sdk/client-acm";
 import { CloudFormation } from "@aws-sdk/client-cloudformation";
 import { STS } from "@aws-sdk/client-sts";
 import type { GetCallerIdentityResponse } from "@aws-sdk/client-sts/dist-types/models/models_0.js";
 import { ListrEnquirerPromptAdapter } from "@listr2/prompt-adapter-enquirer";
+import type { ExecaReturnValue } from "execa";
+import { stat } from "fs/promises";
 import { Listr, ListrLogLevels, ListrLogger } from "listr2";
 import meow from "meow";
+import semver from "semver/preload.js";
 import "source-map-support/register.js";
 import { type Feature, synthProject } from "./synth.js";
 import { execute } from "./util.js";
@@ -48,10 +52,31 @@ type Context = {
     features: Feature[];
     uatCertificateArn: string;
     repositoryUuid: string;
+    projectPath: string;
 };
 
 const tasks = new Listr<Context>(
     [
+        {
+            title: "Check pnpm version",
+            task: async (context, task): Promise<void> => {
+                let result: ExecaReturnValue;
+
+                try {
+                    result = await execute(task.stdout(), "pnpm", ["--version"]);
+                } catch {
+                    throw new Error(
+                        "pnpm not found, please install latest version: https://pnpm.io/installation",
+                    );
+                }
+
+                const version = result.stdout.trim();
+
+                if (!semver.gte(version, "8.14.0")) {
+                    throw new Error(`pnpm version ${version} found, need at least 8.14.0`);
+                }
+            },
+        },
         {
             title: "Retrieve AWS account ID",
             task: async (context, _task): Promise<void> => {
@@ -108,6 +133,20 @@ const tasks = new Listr<Context>(
                     initial: apiName,
                 });
 
+                context.projectPath = path.join(process.cwd(), context.apiName);
+                let projectPathExists = false;
+
+                try {
+                    await stat(context.projectPath);
+                    projectPathExists = true;
+                } catch {
+                    // Noop
+                }
+
+                if (projectPathExists) {
+                    throw new Error(`Path ${context.projectPath} already exists`);
+                }
+
                 context.region = await prompt.run<string>({
                     type: "input",
                     message: "AWS region:",
@@ -153,14 +192,8 @@ const tasks = new Listr<Context>(
             task: async (context, task): Promise<void> => {
                 await execute(
                     task.stdout(),
-                    "npm",
-                    [
-                        "run",
-                        "cdk",
-                        "--",
-                        "bootstrap",
-                        `aws://${context.accountId}/${context.region}`,
-                    ],
+                    "pnpm",
+                    ["exec", "cdk", "bootstrap", `aws://${context.accountId}/${context.region}`],
                     {
                         cwd: fileURLToPath(new URL(".", import.meta.url)),
                         env: {
@@ -175,11 +208,10 @@ const tasks = new Listr<Context>(
             task: async (context, task): Promise<void> => {
                 await execute(
                     task.stdout(),
-                    "npm",
+                    "pnpm",
                     [
-                        "run",
+                        "exec",
                         "cdk",
-                        "--",
                         "deploy",
                         "--app",
                         "node_modules/@soliantconsulting/bitbucket-openid-connect/index.js",
@@ -244,7 +276,7 @@ const tasks = new Listr<Context>(
                     ],
                     { cwd: context.apiName },
                 );
-                await execute(task.stdout(), "npx", ["lefthook", "install"], {
+                await execute(task.stdout(), "pnpm", ["exec", "lefthook", "install"], {
                     cwd: context.apiName,
                 });
                 await execute(task.stdout(), "git", ["push", "-fu", "origin", "main"], {

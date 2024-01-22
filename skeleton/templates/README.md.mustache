@@ -4,14 +4,14 @@ Koa API following [JSON:API](https://jsonapi.org/) 1.1 specification.
 
 ## Setup
 
-- `npm install`
+- `pnpm install`
 {{#if (has features "ssm")}}
 - copy `ssm-config.json.dist` to `ssm-config.json`
 {{/if}}
 {{#if (has features "postgres")}}
-- run `docker compose up -d`
+- `docker compose up -d`
 {{/if}}
-- `npm start`
+- `pnpm start`
 {{#if (has features "ssm")}}
 
 ## SSM parameters

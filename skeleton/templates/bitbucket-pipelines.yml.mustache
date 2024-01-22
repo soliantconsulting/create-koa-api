@@ -2,11 +2,7 @@ image: node:20-alpine
 
 definitions:
   caches:
-    cdk-node:
-      key:
-        files:
-          - cdk/package-lock.json
-      path: cdk/node_modules
+    pnpm: $BITBUCKET_CLONE_DIR/.pnpm-store
 
 pipelines:
   branches:
@@ -19,20 +15,24 @@ pipelines:
                   - 'self.hosted'
                   - 'linux'
                 script:
-                  - CI=true npm install
-                  - npx biome ci .
+                  - corepack enable
+                  - corepack prepare pnpm@latest-8 --activate
+                  - CI=true pnpm install
+                  - pnpm exec biome ci .
                 caches:
-                  - node
+                  - pnpm
             - step:
                 name: Type check
                 runs-on:
                   - 'self.hosted'
                   - 'linux'
                 script:
-                  - CI=true npm install
-                  - npx tsc --noEmit
+                  - corepack enable
+                  - corepack prepare pnpm@latest-8 --activate
+                  - CI=true pnpm install
+                  - pnpm exec tsc --noEmit
                 caches:
-                  - node
+                  - pnpm
       - step:
           name: Deploy UAT
           runs-on:
@@ -43,7 +43,7 @@ pipelines:
           services:
             - docker
           caches:
-            - cdk-node
+            - pnpm
             - docker
           script:
             - export AWS_REGION={{{region}}}
@@ -51,9 +51,11 @@ pipelines:
             - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
             - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
             - cd cdk
-            - npm install
-            - npm run build
-            - npx cdk deploy --app dist/env-uat.js --require-approval never
+            - corepack enable
+            - corepack prepare pnpm@latest-8 --activate
+            - pnpm install
+            - pnpm build
+            - DOCKER_BUILDKIT=1 pnpm exec cdk deploy --app dist/env-uat.js --require-approval never
       - step:
           name: Deploy production
           runs-on:
@@ -65,7 +67,7 @@ pipelines:
           services:
             - docker
           caches:
-            - cdk-node
+            - pnpm
             - docker
           script:
             - export AWS_REGION={{{region}}}
@@ -73,6 +75,8 @@ pipelines:
             - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
             - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
             - cd cdk
-            - npm install
-            - npm run build
-            - npx cdk deploy --app dist/env-prod.js --require-approval never
+            - corepack enable
+            - corepack prepare pnpm@latest-8 --activate
+            - pnpm install
+            - pnpm build
+            - DOCKER_BUILDKIT=1 pnpm exec cdk deploy --app dist/env-prod.js --require-approval never

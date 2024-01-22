@@ -142,11 +142,13 @@ export const synthProject = async (
         await rename(rmExtPath, newPath);
     }
 
-    await execute(context.stdout, "npm", ["install"], { cwd: projectPath });
-    await execute(context.stdout, "npm", ["install"], { cwd: path.join(projectPath, "cdk") });
-    await execute(context.stdout, "npm", ["run", "build"], { cwd: path.join(projectPath, "cdk") });
-    await execute(context.stdout, "npx", ["cdk", "synth", "--app", "dist/env-uat.js"], {
+    await execute(context.stdout, "pnpm", ["install"], { cwd: projectPath });
+    await execute(context.stdout, "pnpm", ["install"], { cwd: path.join(projectPath, "cdk") });
+    await execute(context.stdout, "pnpm", ["run", "build"], { cwd: path.join(projectPath, "cdk") });
+    await execute(context.stdout, "pnpm", ["exec", "cdk", "synth", "--app", "dist/env-uat.js"], {
         cwd: path.join(projectPath, "cdk"),
     });
-    await execute(context.stdout, "npx", ["biome", "check", ".", "--apply"], { cwd: projectPath });
+    await execute(context.stdout, "pnpm", ["exec", "biome", "check", ".", "--apply"], {
+        cwd: projectPath,
+    });
 };
