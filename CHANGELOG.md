@@ -1,3 +1,11 @@
+# [2.2.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.1.0...v2.2.0) (2024-01-22)
+
+
+### Features
+
+* do not force push by default ([fc2174f](https://github.com/soliantconsulting/create-koa-api/commit/fc2174f5a778d5d10159f3b573157e6b1b882602))
+* replace npm with pnpm ([121b337](https://github.com/soliantconsulting/create-koa-api/commit/121b33742f32f3df6600b0dfb77e3d261f5e9346))
+
 # [2.1.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.0.1...v2.1.0) (2024-01-19)
 
 
