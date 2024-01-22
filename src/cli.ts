@@ -59,7 +59,7 @@ const tasks = new Listr<Context>(
     [
         {
             title: "Check pnpm version",
-            task: async (context, task): Promise<void> => {
+            task: async (_context, task): Promise<void> => {
                 let result: ExecaReturnValue;
 
                 try {
@@ -254,14 +254,14 @@ const tasks = new Listr<Context>(
         {
             title: "Synth project",
             task: async (context, task): Promise<void> => {
-                await synthProject(context.apiName, context, task.stdout());
+                await synthProject(context.projectPath, context, task.stdout());
             },
         },
         {
             title: "Git init",
             task: async (context, task): Promise<void> => {
-                await execute(task.stdout(), "git", ["init"], { cwd: context.apiName });
-                await execute(task.stdout(), "git", ["add", "."], { cwd: context.apiName });
+                await execute(task.stdout(), "git", ["init"], { cwd: context.projectPath });
+                await execute(task.stdout(), "git", ["add", "."], { cwd: context.projectPath });
                 await execute(task.stdout(), "git", ["commit", "-m", '"feat: initial commit"'], {
                     cwd: context.apiName,
                 });
@@ -279,9 +279,26 @@ const tasks = new Listr<Context>(
                 await execute(task.stdout(), "pnpm", ["exec", "lefthook", "install"], {
                     cwd: context.apiName,
                 });
-                await execute(task.stdout(), "git", ["push", "-fu", "origin", "main"], {
-                    cwd: context.apiName,
-                });
+
+                let forcePush = false;
+
+                try {
+                    await execute(task.stdout(), "git", ["push", "-u", "origin", "main"], {
+                        cwd: context.apiName,
+                    });
+                } catch {
+                    forcePush = await task.prompt(ListrEnquirerPromptAdapter).run<boolean>({
+                        type: "toggle",
+                        message: "Push failed, try force push?",
+                        initial: false,
+                    });
+                }
+
+                if (forcePush) {
+                    await execute(task.stdout(), "git", ["push", "-fu", "origin", "main"], {
+                        cwd: context.apiName,
+                    });
+                }
             },
         },
     ],
