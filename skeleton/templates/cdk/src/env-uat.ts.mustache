@@ -9,10 +9,8 @@ new ApiStack(app, "{{{apiName}}}-uat", {
         account: "{{{accountId}}}",
         region: "{{{region}}}",
     },
+    apiEnv: "uat",
     certificateArn: "{{{uatCertificateArn}}}",
-{{#if (has features "ssm")}}
-    ssmPrefix: "{{{apiName}}}/uat",
-{{/if}}
 });
 
 app.synth();

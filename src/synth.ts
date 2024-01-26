@@ -11,7 +11,7 @@ Handlebars.registerHelper("has", (features: Feature[], feature: Feature) => {
     return features.includes(feature);
 });
 
-export type Feature = "ssm" | "postgres";
+export type Feature = "appconfig" | "postgres";
 
 export type ProjectConfig = {
     accountId: string;

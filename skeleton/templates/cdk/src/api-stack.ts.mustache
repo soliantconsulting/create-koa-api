@@ -26,10 +26,8 @@ import { ClusterInstance } from "aws-cdk-lib/aws-rds";
 import type { Construct } from "constructs";
 
 type ApiStackProps = StackProps & {
+    apiEnv: string;
     certificateArn: string;
-{{#if (has features "ssm")}}
-    ssmPrefix: string;
-{{/if}}
 };
 
 export class ApiStack extends Stack {
@@ -77,12 +75,42 @@ export class ApiStack extends Stack {
             clientPasswordAuthType: ClientPasswordAuthType.POSTGRES_SCRAM_SHA_256,
         });
 {{/if}}
+{{#if (has features "appconfig")}}
+
+        const appConfig = new AppConfig(this, "AppConfig", {
+            name: `{{{apiName}}}-${props.apiEnv}`,
+        });
+{{/if}}
+
         const cluster = new Cluster(this, "Cluster", {
             vpc,
         });
 
+        const buildkitCachePath = process.env.BUILDKIT_CACHE_PATH;
         const asset = new DockerImageAsset(this, "App", {
             directory: fileURLToPath(new URL("../../", import.meta.url)),
+            cacheTo: buildkitCachePath
+                ? {
+                      type: "local",
+                      params: {
+                          mode: "max",
+                          "image-manifest": "true",
+                          "oci-mediatypes": "true",
+                          dest: buildkitCachePath,
+                      },
+                  }
+                : undefined,
+            cacheFrom: buildkitCachePath
+                ? [
+                      {
+                          type: "local",
+                          params: {
+                              src: buildkitCachePath,
+                          },
+                      },
+                  ]
+                : undefined,
+            outputs: ["type=docker"],
             exclude: ["cdk"],
         });
 
@@ -99,17 +127,9 @@ export class ApiStack extends Stack {
 
         databaseCluster.secret.grantRead(taskRole);
 {{/if}}
-{{#if (has features "ssm")}}
+{{#if (has features "appconfig")}}
 
-        taskRole.addToPolicy(
-            new PolicyStatement({
-                effect: Effect.ALLOW,
-                actions: ["ssm:GetParametersByPath"],
-                resources: [
-                    `arn:aws:ssm:${this.region}:${this.account}:parameter${props.ssmPrefix}`,
-                ],
-            }),
-        );
+        appConfig.grantRead(taskRole);
 {{/if}}
 
         const albService = new ApplicationLoadBalancedFargateService(this, "Service", {
@@ -122,13 +142,15 @@ export class ApiStack extends Stack {
                 image: ContainerImage.fromDockerImageAsset(asset),
                 environment: {
                     PORT: "80",
-{{#if (has features "ssm")}}
-                    SSM_PREFIX: props.ssmPrefix,
-{{/if}}
 {{#if (has features "postgres")}}
                     POSTGRES_HOSTNAME: databaseProxy.endpoint,
                     POSTGRES_PORT: databaseCluster.clusterEndpoint.port.toString(),
                     POSTGRES_SECRET: databaseCluster.secret.secretArn,
+{{/if}}
+{{#if (has features "appconfig")}}
+                    APPCONFIG_APPLICATION_IDENTIFIER: appConfig.applicationId,
+                    APPCONFIG_ENVIRONMENT_IDENTIFIER: appConfig.environmentId,
+                    APPCONFIG_CONFIGURATION_PROFILE_IDENTIFIER: appConfig.configurationProfileId,
 {{/if}}
                 },
                 taskRole,

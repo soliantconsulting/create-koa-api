@@ -3,7 +3,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import { ACM, CertificateStatus } from "@aws-sdk/client-acm";
-import { CloudFormation } from "@aws-sdk/client-cloudformation";
 import { STS } from "@aws-sdk/client-sts";
 import type { GetCallerIdentityResponse } from "@aws-sdk/client-sts/dist-types/models/models_0.js";
 import { ListrEnquirerPromptAdapter } from "@listr2/prompt-adapter-enquirer";
@@ -158,7 +157,7 @@ const tasks = new Listr<Context>(
                     message: "Features:",
                     choices: [
                         { message: "Aurora Postgres", name: "postgres" },
-                        { message: "SSM Parameter Store", name: "ssm" },
+                        { message: "AppConfig", name: "appconfig" },
                     ],
                 });
             },
@@ -211,16 +210,11 @@ const tasks = new Listr<Context>(
                     "pnpm",
                     [
                         "exec",
-                        "cdk",
+                        "bitbucket-openid-connect",
                         "deploy",
-                        "--app",
-                        "node_modules/@soliantconsulting/bitbucket-openid-connect/index.js",
-                        "-c",
-                        `stackSuffix=${context.apiName}`,
-                        "-c",
-                        `repositoryUuid=${context.repositoryUuid}`,
-                        "--require-approval",
-                        "never",
+                        "bitbucket-openid-connect",
+                        context.apiName,
+                        context.repositoryUuid,
                     ],
                     {
                         cwd: fileURLToPath(new URL(".", import.meta.url)),
@@ -230,25 +224,25 @@ const tasks = new Listr<Context>(
                     },
                 );
 
-                const cf = new CloudFormation({ region: context.region });
-                const result = await cf.describeStacks({
-                    StackName: `BitbucketOpenIDConnect-${context.apiName}`,
-                });
+                const result = await execute(
+                    task.stdout(),
+                    "pnpm",
+                    [
+                        "exec",
+                        "bitbucket-openid-connect",
+                        "get-role-arn",
+                        "bitbucket-openid-connect",
+                        context.apiName,
+                    ],
+                    {
+                        cwd: fileURLToPath(new URL(".", import.meta.url)),
+                        env: {
+                            AWS_REGION: context.region,
+                        },
+                    },
+                );
 
-                if (!result.Stacks?.[0]) {
-                    throw new Error(
-                        `Could not locate BitbucketOpenIDConnect-${context.apiName} stack`,
-                    );
-                }
-
-                const stack = result.Stacks[0];
-                const output = stack.Outputs?.find((output) => output.OutputKey === "RoleArn");
-
-                if (!output?.OutputValue) {
-                    throw new Error("Could not find RoleArn output");
-                }
-
-                context.deployRoleArn = output.OutputValue;
+                context.deployRoleArn = result.stdout;
             },
         },
         {

@@ -12,10 +12,8 @@ new ApiStack(app, "{{{apiName}}}-prod", {
         account: "{{{accountId}}}",
         region: "{{{region}}}",
     },
+    apiEnv: "prod",
     certificateArn: "",
-{{#if (has features "ssm")}}
-    ssmPrefix: "{{{apiName}}}/prod",
-{{/if}}
 });
 
 app.synth();
