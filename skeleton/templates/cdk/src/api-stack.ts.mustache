@@ -6,6 +6,7 @@ import {
     InstanceSize,
     InstanceType,
     IpAddresses,
+    IpProtocol,
     SubnetType,
     Vpc,
 } from "aws-cdk-lib/aws-ec2";
@@ -35,6 +36,7 @@ export class ApiStack extends Stack {
         super(scope, id, props);
 
         const vpc = new Vpc(this, "Vpc", {
+            ipProtocol: IpProtocol.DUAL_STACK,
             ipAddresses: IpAddresses.cidr("172.10.0.0/16"),
             subnetConfiguration: [
                 {
@@ -43,8 +45,8 @@ export class ApiStack extends Stack {
                 },
 {{#if (has features "postgres")}}
                 {
-                    name: "Private",
-                    subnetType: SubnetType.PRIVATE_WITH_EGRESS,
+                    name: "PrivateIsolated",
+                    subnetType: SubnetType.PRIVATE_ISOLATED,
                 },
 {{/if}}
             ],
@@ -53,15 +55,23 @@ export class ApiStack extends Stack {
 {{#if (has features "postgres")}}
 
         const databaseCluster = new DatabaseCluster(this, "Database", {
+            vpc,
+            vpcSubnets: { subnetType: SubnetType.PRIVATE_ISOLATED },
             engine: DatabaseClusterEngine.auroraPostgres({
                 version: AuroraPostgresEngineVersion.VER_16_0,
             }),
             credentials: Credentials.fromGeneratedSecret("api"),
             writer: ClusterInstance.provisioned("DatabaseWriter", {
                 instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.MEDIUM),
+                autoMinorVersionUpgrade: true,
+                allowMajorVersionUpgrade: true,
             }),
-            vpc,
             defaultDatabaseName: "api",
+            backup: {
+                retention: Duration.days(21),
+                // 1am to 2am west coast, 4am to 5am east coast
+                preferredWindow: '09:00-10:00',
+            },
         });
 
         if (!databaseCluster.secret) {
