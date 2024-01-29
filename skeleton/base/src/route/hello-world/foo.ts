@@ -4,7 +4,11 @@ import { z } from "zod";
 import { parseBody, parseQuery } from "../../util/zod.js";
 
 const getHelloWorld = (context: Context) => {
-    context.body = { message: "hello-world" };
+    context.body = {
+        data: {
+            message: "hello-world",
+        },
+    };
 };
 
 const listQuerySchema = z.object({
@@ -14,18 +18,18 @@ const listQuerySchema = z.object({
 const listHelloWorld = (context: Context) => {
     const query = parseQuery(listQuerySchema, context);
 
-    context.body = { foo: query.foo };
+    context.body = { data: { foo: query.foo } };
 };
 
-const listPostSchema = z.object({
+const postSchema = z.object({
     foo: z.string(),
 });
 
 const postHelloWorld = (context: Context) => {
-    const input = parseBody(listPostSchema, context);
+    const input = parseBody(postSchema, context);
 
     context.status = 201;
-    context.body = { foo: input.foo };
+    context.body = { data: { foo: input.foo } };
 };
 
 export const registerFooRoutes = (router: Router): void => {
