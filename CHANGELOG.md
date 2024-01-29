@@ -1,3 +1,17 @@
+# [2.3.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.2.0...v2.3.0) (2024-01-29)
+
+
+### Bug Fixes
+
+* apply various fixes to postgres feature and VPC ([b274d11](https://github.com/soliantconsulting/create-koa-api/commit/b274d11f7723e7afdf555f99196516bfc36587e3))
+
+
+### Features
+
+* add IPv6 and move database to isolated subnet ([974a311](https://github.com/soliantconsulting/create-koa-api/commit/974a311d61c1c09215fb705a3955c0eec9e7cc48))
+* replace parameter store with appconfig ([3b9f16f](https://github.com/soliantconsulting/create-koa-api/commit/3b9f16ff3be03c9ae64b546d43f79e050c723adc))
+* update hello-world route to JSON:API format ([da50fb9](https://github.com/soliantconsulting/create-koa-api/commit/da50fb96b7ccc0f16f384d8be405343882b45cab))
+
 # [2.2.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.1.0...v2.2.0) (2024-01-22)
 
 
