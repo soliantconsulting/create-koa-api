@@ -13,7 +13,7 @@ import {
 import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
 import { Cluster, ContainerImage } from "aws-cdk-lib/aws-ecs";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
-import { Effect, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import {
     AuroraPostgresEngineVersion,
     ClientPasswordAuthType,
@@ -25,6 +25,7 @@ import {
 } from "aws-cdk-lib/aws-rds";
 import { ClusterInstance } from "aws-cdk-lib/aws-rds";
 import type { Construct } from "constructs";
+import { AppConfig } from "./app-config.js";
 
 type ApiStackProps = StackProps & {
     apiEnv: string;
@@ -37,21 +38,17 @@ export class ApiStack extends Stack {
 
         const vpc = new Vpc(this, "Vpc", {
             ipProtocol: IpProtocol.DUAL_STACK,
-            ipAddresses: IpAddresses.cidr("172.10.0.0/16"),
-            subnetConfiguration: [
-                {
-                    name: "Public",
-                    subnetType: SubnetType.PUBLIC,
-                },
-{{#if (has features "postgres")}}
-                {
-                    name: "PrivateIsolated",
-                    subnetType: SubnetType.PRIVATE_ISOLATED,
-                },
-{{/if}}
-            ],
+            natGateways: 0,
             maxAzs: 2,
         });
+
+        // @see https://github.com/aws/aws-cdk/issues/28843
+        const ipv6CidrBlock = vpc.node.findChild("ipv6cidr") as CfnVPCCidrBlock;
+
+        for (const subnet of vpc.isolatedSubnets) {
+            subnet.node.addDependency(ipv6CidrBlock);
+        }
+
 {{#if (has features "postgres")}}
 
         const databaseCluster = new DatabaseCluster(this, "Database", {
@@ -78,9 +75,8 @@ export class ApiStack extends Stack {
             throw new Error("Database cluster has nio secret attached");
         }
 
-        const databaseProxy = new DatabaseProxy(this, "DatabaseProxy", {
+        const databaseProxy = databaseCluster.addProxy("DatabaseProxy", {
             vpc,
-            proxyTarget: ProxyTarget.fromCluster(databaseCluster),
             secrets: [databaseCluster.secret],
             clientPasswordAuthType: ClientPasswordAuthType.POSTGRES_SCRAM_SHA_256,
         });
@@ -130,18 +126,6 @@ export class ApiStack extends Stack {
             props.certificateArn,
         );
 
-        const taskRole = new Role(this, "TaskRole", {
-            assumedBy: new ServicePrincipal("ecs-tasks.amazonaws.com"),
-        });
-{{#if (has features "postgres")}}
-
-        databaseCluster.secret.grantRead(taskRole);
-{{/if}}
-{{#if (has features "appconfig")}}
-
-        appConfig.grantRead(taskRole);
-{{/if}}
-
         const albService = new ApplicationLoadBalancedFargateService(this, "Service", {
             cluster,
             cpu: 512,
@@ -154,8 +138,9 @@ export class ApiStack extends Stack {
                     PORT: "80",
 {{#if (has features "postgres")}}
                     POSTGRES_HOSTNAME: databaseProxy.endpoint,
-                    POSTGRES_PORT: databaseCluster.clusterEndpoint.port.toString(),
+                    POSTGRES_PORT: "5432",
                     POSTGRES_SECRET: databaseCluster.secret.secretArn,
+                    PGSSLMODE: "require",
 {{/if}}
 {{#if (has features "appconfig")}}
                     APPCONFIG_APPLICATION_IDENTIFIER: appConfig.applicationId,
@@ -166,17 +151,29 @@ export class ApiStack extends Stack {
                 taskRole,
             },
             certificate: certificate,
+            // As long as there are 11 or less docker instances running in the VPC, assigning public IPs is cheaper
+            // than assigning a NAT gateway. In a large project, consider moving the tasks into a private subnet with
+            // egress instead and enable NAT gateway.
+            taskSubnets: { subnetType: SubnetType.PUBLIC },
             assignPublicIp: true,
             publicLoadBalancer: true,
             healthCheckGracePeriod: Duration.seconds(10),
         });
+
+{{#if (has features "postgres")}}
+        albService.service.connections.allowTo(databaseProxy.connections, Port.tcp(5432));
+        databaseCluster.secret.grantRead(albService.taskDefinition.taskRole);
+{{/if}}
+{{#if (has features "appconfig")}}
+        appConfig.grantRead(albService.taskDefinition.taskRole);
+{{/if}}
 
         const serviceScaling = albService.service.autoScaleTaskCount({ maxCapacity: 10 });
         serviceScaling.scaleOnCpuUtilization("ScalingCpu", {
             targetUtilizationPercent: 60,
         });
 
-        albService.targetGroup.setAttribute("deregistration_delay.timeout_seconds", "30");
+        albService.targetGroup.setAttribute("deregistration_delay.timeout_seconds", "5");
 
         albService.targetGroup.configureHealthCheck({
             enabled: true,

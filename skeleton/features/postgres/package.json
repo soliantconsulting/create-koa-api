@@ -11,7 +11,7 @@
         "@sindresorhus/fnv1a": "^3.1.0"
     },
     "scripts": {
-        "mikro-orm": "tsx ./node_modules/.bin/mikro-orm-esm"
+        "mikro-orm": "tsx ./node_modules/@mikro-orm/cli/esm"
     },
     "mikro-orm": {
         "configPaths": [

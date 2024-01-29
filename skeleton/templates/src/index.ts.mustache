@@ -8,10 +8,19 @@ import cacheControl from "koa-cache-control";
 import compress from "koa-compress";
 import Router from "koa-tree-router";
 import "source-map-support/register.js";
+import { appConfigHandler } from "./app-config/handler.js";
 import { registerRoutes } from "./route/index.js";
 import { orm, requestContextMiddleware } from "./util/mikro-orm.js";
 import { logger } from "./util/winston.js";
 import { ZodValidationError } from "./util/zod.js";
+{{#if (has features "appconfig")}}
+
+const result = await appConfigHandler.start();
+
+if (result.error) {
+    throw result.error;
+}
+{{/if}}
 
 const app = new Koa();
 
@@ -126,9 +135,19 @@ app.use(router.routes());
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const server = app.listen(port, process.env.HOST);
 
-gracefulShutdown(server{{#if usePostgres}}, {
+{{#if (has features "postgres" "appconfig")}}
+gracefulShutdown(server, {
     onShutdown: async () => {
+{{#if (has features "appconfig")}}
+        appConfigHandler.stop();
+{{/if}}
+{{#if (has features "postgres")}}
         await orm.close();
+{{/if}}
     },
-}{{/if}});
+};
+{{else}}
+gracefulShutdown(server);
+{{/if}})
+
 logger.info(`Server started on port ${port}`);

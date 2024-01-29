@@ -7,8 +7,9 @@ import Handlebars from "handlebars";
 import type { PackageJson, TSConfig } from "pkg-types";
 import { execute } from "./util.js";
 
-Handlebars.registerHelper("has", (features: Feature[], feature: Feature) => {
-    return features.includes(feature);
+Handlebars.registerHelper("has", (selectedFeatures: Feature[], ...rest) => {
+    const features = rest.slice(0, -1) as Feature[];
+    return selectedFeatures.some((feature) => features.includes(feature));
 });
 
 export type Feature = "appconfig" | "postgres";

@@ -14,13 +14,16 @@ Koa API following [JSON:API](https://jsonapi.org/) 1.1 specification.
 - `pnpm start`
 {{#if (has features "postgres")}}
 
-    ## Postgres
+## Postgres
 
-    Use the MikroORM CLI to create and run migrations:
+Use the MikroORM CLI to create and run migrations:
 
-    ```bash
-    pnpm mikro-orm help
-    ```
+```bash
+pnpm mikro-orm help
+```
+
+Migrations are automatically applied on application start using an advisory lock. This makes sure that only one
+container will apply the migrations. When creating migrations, make sure that they are **always**
 {{/if}}
 {{#if (has features "appconfig")}}
 
