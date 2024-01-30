@@ -1,3 +1,10 @@
+## [2.3.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.3.0...v2.3.1) (2024-01-30)
+
+
+### Bug Fixes
+
+* **synth:** fix various synth errors ([828ffd8](https://github.com/soliantconsulting/create-koa-api/commit/828ffd82733e75c66141b4bf8a63b1a449d9b33c))
+
 # [2.3.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.2.0...v2.3.0) (2024-01-29)
 
 
