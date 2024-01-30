@@ -2,6 +2,7 @@ import { fileURLToPath } from "url";
 import { Duration, Stack, type StackProps } from "aws-cdk-lib";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import {
+    type CfnVPCCidrBlock,
     InstanceClass,
     InstanceSize,
     InstanceType,
@@ -148,7 +149,6 @@ export class ApiStack extends Stack {
                     APPCONFIG_CONFIGURATION_PROFILE_IDENTIFIER: appConfig.configurationProfileId,
 {{/if}}
                 },
-                taskRole,
             },
             certificate: certificate,
             // As long as there are 11 or less docker instances running in the VPC, assigning public IPs is cheaper
