@@ -111,6 +111,9 @@ export default (async (): Promise<Options> => {
             pathTs: "./src/migration",
             generator,
         },
+        discovery: {
+            warnWhenNoEntities: false,
+        },
         loadStrategy: LoadStrategy.JOINED,
         ...postgresConfig,
     });

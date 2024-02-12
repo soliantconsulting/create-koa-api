@@ -8,6 +8,7 @@ import {
     InstanceType,
     IpAddresses,
     IpProtocol,
+    Port,
     SubnetType,
     Vpc,
 } from "aws-cdk-lib/aws-ec2";
@@ -75,12 +76,6 @@ export class ApiStack extends Stack {
         if (!databaseCluster.secret) {
             throw new Error("Database cluster has nio secret attached");
         }
-
-        const databaseProxy = databaseCluster.addProxy("DatabaseProxy", {
-            vpc,
-            secrets: [databaseCluster.secret],
-            clientPasswordAuthType: ClientPasswordAuthType.POSTGRES_SCRAM_SHA_256,
-        });
 {{/if}}
 {{#if (has features "appconfig")}}
 
@@ -138,8 +133,8 @@ export class ApiStack extends Stack {
                 environment: {
                     PORT: "80",
 {{#if (has features "postgres")}}
-                    POSTGRES_HOSTNAME: databaseProxy.endpoint,
-                    POSTGRES_PORT: "5432",
+                    POSTGRES_HOSTNAME: databaseCluster.clusterEndpoint.hostname,
+                    POSTGRES_PORT: databaseCluster.clusterEndpoint.port.toString(),
                     POSTGRES_SECRET: databaseCluster.secret.secretArn,
                     PGSSLMODE: "require",
 {{/if}}
@@ -161,7 +156,7 @@ export class ApiStack extends Stack {
         });
 
 {{#if (has features "postgres")}}
-        albService.service.connections.allowTo(databaseProxy.connections, Port.tcp(5432));
+        albService.service.connections.allowToDefaultPort(databaseCluster.connections);
         databaseCluster.secret.grantRead(albService.taskDefinition.taskRole);
 {{/if}}
 {{#if (has features "appconfig")}}

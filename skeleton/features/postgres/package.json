@@ -8,7 +8,8 @@
         "@mikro-orm/core": "^6.0.0",
         "@mikro-orm/postgresql": "^6.0.0",
         "@mikro-orm/migrations": "^6.0.0",
-        "@sindresorhus/fnv1a": "^3.1.0"
+        "@sindresorhus/fnv1a": "^3.1.0",
+        "flat": "^6.0.1"
     },
     "scripts": {
         "mikro-orm": "tsx ./node_modules/@mikro-orm/cli/esm"

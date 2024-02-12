@@ -98,6 +98,7 @@ export const synthProject = async (
     projectPath: string,
     config: ProjectConfig,
     stdout: NodeJS.WritableStream,
+    synthCdk = true,
 ): Promise<void> => {
     const context: ProjectContext = {
         projectPath,
@@ -149,7 +150,15 @@ export const synthProject = async (
     });
     await execute(context.stdout, "pnpm", ["install"], { cwd: path.join(projectPath, "cdk") });
     await execute(context.stdout, "pnpm", ["run", "build"], { cwd: path.join(projectPath, "cdk") });
-    await execute(context.stdout, "pnpm", ["exec", "cdk", "synth", "--app", "dist/env-uat.js"], {
-        cwd: path.join(projectPath, "cdk"),
-    });
+
+    if (synthCdk) {
+        await execute(
+            context.stdout,
+            "pnpm",
+            ["exec", "cdk", "synth", "--app", "dist/env-uat.js"],
+            {
+                cwd: path.join(projectPath, "cdk"),
+            },
+        );
+    }
 };
