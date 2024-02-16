@@ -4,16 +4,13 @@ import { ApiStack } from "./api-stack.js";
 
 const app = new App();
 
-throw new Error("Production env not configured");
-
-// biome-ignore lint/correctness/noUnreachable: env not configured
-new ApiStack(app, "{{{apiName}}}-prod", {
+new ApiStack(app, "{{{apiName}}}-staging", {
     env: {
         account: "{{{accountId}}}",
         region: "{{{region}}}",
     },
-    apiEnv: "prod",
-    certificateArn: "",
+    apiEnv: "staging",
+    certificateArn: "{{{uatCertificateArn}}}",
 });
 
 app.synth();

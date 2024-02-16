@@ -34,8 +34,8 @@ container will apply the migrations. When creating migrations, make sure that th
 This project uses AppConfig for additional configuration parameters. Once an environment is deployed, there will be two
 AppConfig applications available:
 
-- `{{{apiName}}}-uat`
-- `{{{apiName}}}-prod`
+- `{{{apiName}}}-staging`
+- `{{{apiName}}}-production`
 
 For local development, the file `dev-app-config.toml.dist` and `dev-app-config.toml` should reflect the same config.
 You should store non-sensitive values in the `.dist` file, while secrets should be left blank and filled out when

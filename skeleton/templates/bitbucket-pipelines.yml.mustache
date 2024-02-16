@@ -54,20 +54,6 @@ definitions:
           - pnpm
           - buildkit
         script:
-          # Determine script to run depending on deployment environment
-          - |
-            case $BITBUCKET_DEPLOYMENT_ENVIRONMENT in
-              staging)
-                ENV_SCRIPT="env-uat.js"
-                ;;
-              production)
-                ENV_SCRIPT="env-prod.js"
-                ;;
-              *)
-                echo "Unknown environment: $BITBUCKET_DEPLOYMENT_ENVIRONMENT"
-                exit 1
-                ;;
-            esac
           # Configure OIDC
           - export AWS_REGION={{{region}}}
           - export AWS_ROLE_ARN={{{deployRoleArn}}}
@@ -89,7 +75,7 @@ definitions:
           - docker buildx create --use
           # Deploy with CDK
           - export BUILDKIT_CACHE_PATH="$HOME/.buildkit-cache"
-          - pnpm exec cdk deploy --app dist/$ENV_SCRIPT --require-approval never
+          - pnpm exec cdk deploy --app dist/env-$BITBUCKET_DEPLOYMENT_ENVIRONMENT.js --require-approval never
 
 pipelines:
   branches:
@@ -115,11 +101,11 @@ pipelines:
                   - cdk/dist/**
       - step:
           <<: *deploy
-          name: Deploy UAT
+          name: Deploy Staging
           deployment: staging
       - step:
           <<: *deploy
-          name: Deploy production
+          name: Deploy Production
           deployment: production
           trigger: manual
   pull-requests:

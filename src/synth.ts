@@ -20,7 +20,7 @@ export type ProjectConfig = {
     deployRoleArn: string;
     apiName: string;
     features: Feature[];
-    uatCertificateArn: string;
+    stagingCertificateArn: string;
 };
 
 type ProjectContext = {

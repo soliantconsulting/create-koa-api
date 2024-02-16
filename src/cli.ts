@@ -49,7 +49,7 @@ type Context = {
     apiName: string;
     region: string;
     features: Feature[];
-    uatCertificateArn: string;
+    stagingCertificateArn: string;
     repositoryUuid: string;
     projectPath: string;
 };
@@ -174,11 +174,11 @@ const tasks = new Listr<Context>(
                     throw new Error(`No issued certificates found in region ${context.region}`);
                 }
 
-                context.uatCertificateArn = await task
+                context.stagingCertificateArn = await task
                     .prompt(ListrEnquirerPromptAdapter)
                     .run<string>({
                         type: "select",
-                        message: "UAT Certificate:",
+                        message: "Staging Certificate:",
                         choices: result.CertificateSummaryList.map((certificate) => ({
                             message: certificate.DomainName,
                             name: certificate.CertificateArn,

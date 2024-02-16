@@ -38,7 +38,7 @@ await synthProject(
         deployRoleArn: "arn://unknown",
         apiName: "koa-api-test",
         features: ["postgres", "appconfig"],
-        uatCertificateArn: "arn://unknown",
+        stagingCertificateArn: "arn://unknown",
     },
     process.stdout,
     false,
