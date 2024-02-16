@@ -1,3 +1,10 @@
+## [2.5.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.5.0...v2.5.1) (2024-02-16)
+
+
+### Bug Fixes
+
+* **synth:** run cdk-synth with env-staging.js ([7a61936](https://github.com/soliantconsulting/create-koa-api/commit/7a6193698df4d6517c3ac91609529aad2aa1fc75))
+
 # [2.5.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.4.0...v2.5.0) (2024-02-16)
 
 
