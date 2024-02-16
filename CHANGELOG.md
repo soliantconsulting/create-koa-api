@@ -1,3 +1,10 @@
+# [2.5.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.4.0...v2.5.0) (2024-02-16)
+
+
+### Features
+
+* rename UAT to staging ([78e9895](https://github.com/soliantconsulting/create-koa-api/commit/78e9895cec0593730fa054f617ebe73d824ee73d))
+
 # [2.4.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.3.1...v2.4.0) (2024-02-12)
 
 
