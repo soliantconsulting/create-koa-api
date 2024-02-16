@@ -155,7 +155,7 @@ export const synthProject = async (
         await execute(
             context.stdout,
             "pnpm",
-            ["exec", "cdk", "synth", "--app", "dist/env-uat.js"],
+            ["exec", "cdk", "synth", "--app", "dist/env-staging.js"],
             {
                 cwd: path.join(projectPath, "cdk"),
             },
