@@ -36,6 +36,7 @@
     "@aws-sdk/client-cloudformation": "^3.496.0",
     "@aws-sdk/client-sts": "^3.496.0",
     "@listr2/prompt-adapter-enquirer": "^2.0.1",
+    "@soliantconsulting/bitbucket-cloud-cli-auth": "^1.0.0",
     "@soliantconsulting/bitbucket-openid-connect": "^1.1.1",
     "aws-cdk": "^2.122.0",
     "deepmerge": "^4.3.1",

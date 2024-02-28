@@ -6,12 +6,14 @@ import { ACM, CertificateStatus } from "@aws-sdk/client-acm";
 import { STS } from "@aws-sdk/client-sts";
 import type { GetCallerIdentityResponse } from "@aws-sdk/client-sts/dist-types/models/models_0.js";
 import { ListrEnquirerPromptAdapter } from "@listr2/prompt-adapter-enquirer";
+import { getAccessToken } from "@soliantconsulting/bitbucket-cloud-cli-auth";
 import type { ExecaReturnValue } from "execa";
 import { stat } from "fs/promises";
 import { Listr, ListrLogLevels, ListrLogger } from "listr2";
 import meow from "meow";
 import semver from "semver/preload.js";
 import "source-map-support/register.js";
+import { BitBucketClient } from "./bitbucket.js";
 import { type Feature, synthProject } from "./synth.js";
 import { execute } from "./util.js";
 
@@ -46,6 +48,7 @@ type Context = {
     workspace: string;
     repository: string;
     deployRoleArn: string;
+    bitbucketAccessToken: string;
     apiName: string;
     region: string;
     features: Feature[];
@@ -116,15 +119,8 @@ const tasks = new Listr<Context>(
                 }
 
                 const [, workspace, repository] = repositoryMatch;
-                const openIdConnectSettingsUrl = `https://bitbucket.org/${workspace}/${repository}/admin/pipelines/openid-connect`;
                 context.workspace = workspace;
                 context.repository = repository;
-
-                context.repositoryUuid = await prompt.run<string>({
-                    type: "input",
-                    message: "Repository UUID:",
-                    footer: `Copy from ${openIdConnectSettingsUrl}`,
-                });
 
                 context.apiName = await prompt.run<string>({
                     type: "input",
@@ -160,6 +156,22 @@ const tasks = new Listr<Context>(
                         { message: "AppConfig", name: "appconfig" },
                     ],
                 });
+            },
+        },
+        {
+            title: "Connect to BitBucket",
+            task: async (context): Promise<void> => {
+                context.bitbucketAccessToken = await getAccessToken("knXh7CKqDtCUHLrhVW", 31337);
+            },
+        },
+        {
+            title: "Retrieve repository UUID",
+            task: async (context): Promise<void> => {
+                const bitbucket = new BitBucketClient(context.bitbucketAccessToken);
+                context.repositoryUuid = await bitbucket.getRepositoryUuid(
+                    context.workspace,
+                    context.repository,
+                );
             },
         },
         {
