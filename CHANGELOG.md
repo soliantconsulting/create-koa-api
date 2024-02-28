@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.5.1...v2.6.0) (2024-02-28)
+
+
+### Features
+
+* use BitBucket API for repository UUID retrieval ([d8a0f5b](https://github.com/soliantconsulting/create-koa-api/commit/d8a0f5b9a958f1346a1c2a167959e4c5928c9c5b))
+
 ## [2.5.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.5.0...v2.5.1) (2024-02-16)
 
 
