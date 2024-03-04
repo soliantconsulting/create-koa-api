@@ -1,3 +1,10 @@
+# [2.7.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.6.0...v2.7.0) (2024-03-04)
+
+
+### Features
+
+* update to koa-jsonapi-zod 1.4.0 ([e1a293b](https://github.com/soliantconsulting/create-koa-api/commit/e1a293b2df03a421ef7a016e7987a5a33cfc868a))
+
 # [2.6.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.5.1...v2.6.0) (2024-02-28)
 
 
