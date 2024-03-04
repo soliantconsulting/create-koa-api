@@ -7,9 +7,9 @@ import bodyParser from "koa-bodyparser";
 import cacheControl from "koa-cache-control";
 import compress from "koa-compress";
 import {
-    JsonApiErrorBody,
     jsonApiErrorMiddleware,
     jsonApiRequestMiddleware,
+    methodNotAllowedHandler,
 } from "koa-jsonapi-zod";
 import Router from "koa-tree-router";
 import "source-map-support/register.js";
@@ -20,9 +20,9 @@ import { logger } from "./util/winston.js";
 import { ZodValidationError } from "./util/zod.js";
 {{#if (has features "appconfig")}}
 
-const result = await appConfigHandler.start();
+const appConfigStartResult = await appConfigHandler.start();
 
-if (result.error) {
+if (appConfigStartResult.error) {
     throw result.error;
 }
 {{/if}}
@@ -31,10 +31,16 @@ const app = new Koa();
 
 app.use(cacheControl({ noStore: true }));
 app.use(
-    jsonApiRequestMiddleware({
-        excludedPaths: ["/health"],
+    compress({
+        br: {
+            params: {
+                [zlib.constants.BROTLI_PARAM_QUALITY]: 1,
+            },
+        },
     }),
 );
+app.use(cors({ maxAge: 86400 }));
+app.use(jsonApiRequestMiddleware());
 app.use(
     jsonApiErrorMiddleware({
         logError: (error, exposed) => {
@@ -45,16 +51,6 @@ app.use(
     }),
 );
 app.use(bodyParser());
-app.use(cors({ maxAge: 86400 }));
-app.use(
-    compress({
-        br: {
-            params: {
-                [zlib.constants.BROTLI_PARAM_QUALITY]: 1,
-            },
-        },
-    }),
-);
 
 app.use(async (context, next) => {
     if (context.url === "/health") {
@@ -69,29 +65,7 @@ app.use(async (context, next) => {
 app.use(requestContextMiddleware);
 {{/if}}
 
-const router = new Router({
-    onMethodNotAllowed: (context) => {
-        if (context.response.headers.allow === "") {
-            context.remove("allow");
-            context.status = 404;
-            context.body = new JsonApiErrorBody({
-                status: "404",
-                code: "not_found",
-                title: "Resource not found",
-            });
-            return;
-        }
-
-        context.status = 405;
-        context.body = new JsonApiErrorBody({
-            status: "405",
-            code: "method_not_allowed",
-            title: "Method not allowed",
-            detail: `Allowed methods: ${context.response.headers.allow}`,
-        });
-    },
-});
-
+const router = new Router({ onMethodNotAllowed: methodNotAllowedHandler });
 registerRoutes(router);
 app.use(router.routes());
 
