@@ -1,3 +1,10 @@
+# [2.8.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.7.0...v2.8.0) (2024-03-05)
+
+
+### Features
+
+* enable bitbucket pipeline during setup ([8a28c0b](https://github.com/soliantconsulting/create-koa-api/commit/8a28c0b65cb63cb8ba53452ff2055445a22405d2))
+
 # [2.7.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.6.0...v2.7.0) (2024-03-04)
 
 
