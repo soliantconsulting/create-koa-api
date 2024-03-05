@@ -1,3 +1,10 @@
+## [2.8.3](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.2...v2.8.3) (2024-03-05)
+
+
+### Bug Fixes
+
+* **skeleton:** use correct stagingCertificateArn variable for interpolation ([d542087](https://github.com/soliantconsulting/create-koa-api/commit/d5420875db407d7bb8b904c34c8fa6c97b2b32ff))
+
 ## [2.8.2](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.1...v2.8.2) (2024-03-05)
 
 
