@@ -1,3 +1,10 @@
+## [2.8.2](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.1...v2.8.2) (2024-03-05)
+
+
+### Bug Fixes
+
+* **skeleton:** rename legacy variable ([0b7c65d](https://github.com/soliantconsulting/create-koa-api/commit/0b7c65d1a3d97020da0a94b40b6b8c08dd240ab3))
+
 ## [2.8.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.0...v2.8.1) (2024-03-05)
 
 
