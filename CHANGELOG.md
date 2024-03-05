@@ -1,3 +1,10 @@
+## [2.8.4](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.3...v2.8.4) (2024-03-05)
+
+
+### Bug Fixes
+
+* **skeleton:** add .dist extension to dev app-config ([8e5af32](https://github.com/soliantconsulting/create-koa-api/commit/8e5af32ca7b45b12981a1f793b6f7efe9ca50cf1))
+
 ## [2.8.3](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.2...v2.8.3) (2024-03-05)
 
 
