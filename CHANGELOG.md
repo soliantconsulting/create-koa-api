@@ -1,3 +1,10 @@
+## [2.8.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.0...v2.8.1) (2024-03-05)
+
+
+### Bug Fixes
+
+* **cli:** remove notice about manual pipeline run ([3b86821](https://github.com/soliantconsulting/create-koa-api/commit/3b868210197b8eaeb855146c53d9e8a803859884))
+
 # [2.8.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.7.0...v2.8.0) (2024-03-05)
 
 
