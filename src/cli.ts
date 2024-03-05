@@ -167,11 +167,23 @@ const tasks = new Listr<Context>(
         {
             title: "Retrieve repository UUID",
             task: async (context): Promise<void> => {
-                const bitbucket = new BitBucketClient(context.bitbucketAccessToken);
-                context.repositoryUuid = await bitbucket.getRepositoryUuid(
+                const bitbucket = new BitBucketClient(
+                    context.bitbucketAccessToken,
                     context.workspace,
                     context.repository,
                 );
+                context.repositoryUuid = await bitbucket.getRepositoryUuid();
+            },
+        },
+        {
+            title: "Configure pipeline environments",
+            task: async (context): Promise<void> => {
+                const bitbucket = new BitBucketClient(
+                    context.bitbucketAccessToken,
+                    context.workspace,
+                    context.repository,
+                );
+                await bitbucket.enablePipeline();
             },
         },
         {

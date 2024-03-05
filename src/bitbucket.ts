@@ -5,14 +5,21 @@ type GetRepositoryResponse = {
 };
 
 export class BitBucketClient {
-    public constructor(private accessToken: string) {}
+    public constructor(
+        private readonly accessToken: string,
+        private readonly workspace: string,
+        private readonly repoSlug: string,
+    ) {}
 
-    public async getRepositoryUuid(workspace: string, repoSlug: string): Promise<string> {
-        const response = await fetch(`${BASE_URL}/repositories/${workspace}/${repoSlug}`, {
-            headers: {
-                authorization: `Bearer ${this.accessToken}`,
+    public async getRepositoryUuid(): Promise<string> {
+        const response = await fetch(
+            `${BASE_URL}/repositories/${this.workspace}/${this.repoSlug}`,
+            {
+                headers: {
+                    authorization: `Bearer ${this.accessToken}`,
+                },
             },
-        });
+        );
 
         if (!response.ok) {
             throw new Error("Failed to fetch repository");
@@ -20,5 +27,25 @@ export class BitBucketClient {
 
         const body = (await response.json()) as GetRepositoryResponse;
         return body.uuid;
+    }
+
+    public async enablePipeline(): Promise<void> {
+        const response = await fetch(
+            `${BASE_URL}/repositories/${this.workspace}/${this.repoSlug}/pipelines_config`,
+            {
+                method: "PUT",
+                headers: {
+                    authorization: `Bearer ${this.accessToken}`,
+                    "content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    enabled: true,
+                }),
+            },
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to enable pipeline");
+        }
     }
 }
