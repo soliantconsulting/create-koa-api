@@ -23,7 +23,7 @@ import { ZodValidationError } from "./util/zod.js";
 const appConfigStartResult = await appConfigHandler.start();
 
 if (appConfigStartResult.error) {
-    throw result.error;
+    throw appConfigStartResult.error;
 }
 {{/if}}
 
