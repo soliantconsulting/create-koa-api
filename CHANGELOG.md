@@ -1,3 +1,10 @@
+## [2.8.5](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.4...v2.8.5) (2024-03-06)
+
+
+### Bug Fixes
+
+* run commitlint without bash ([d81d946](https://github.com/soliantconsulting/create-koa-api/commit/d81d9467ba52c20e1213fe54c998946c5944ab28))
+
 ## [2.8.4](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.3...v2.8.4) (2024-03-05)
 
 
