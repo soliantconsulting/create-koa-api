@@ -1,3 +1,10 @@
+## [2.8.6](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.5...v2.8.6) (2024-03-06)
+
+
+### Bug Fixes
+
+* add missing end of lefthook check command ([e80e9e0](https://github.com/soliantconsulting/create-koa-api/commit/e80e9e03b4bbd341608ebb3cb73cb03878f52e64))
+
 ## [2.8.5](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.4...v2.8.5) (2024-03-06)
 
 
