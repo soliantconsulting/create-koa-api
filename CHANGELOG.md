@@ -1,3 +1,11 @@
+# [2.9.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.6...v2.9.0) (2024-03-10)
+
+
+### Features
+
+* add health check to ecs container and enable execute command ([d010ac4](https://github.com/soliantconsulting/create-koa-api/commit/d010ac4ddaa5e69d24669e6abb471e9c7eee3fee))
+* enable rds Performance Insights ([116fc97](https://github.com/soliantconsulting/create-koa-api/commit/116fc973999116e5eb34aaf01358cc3b8eaa7a0e))
+
 ## [2.8.6](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.5...v2.8.6) (2024-03-06)
 
 
