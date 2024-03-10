@@ -64,6 +64,7 @@ export class ApiStack extends Stack {
                 instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.MEDIUM),
                 autoMinorVersionUpgrade: true,
                 allowMajorVersionUpgrade: true,
+                enablePerformanceInsights: true,
             }),
             defaultDatabaseName: "api",
             backup: {
