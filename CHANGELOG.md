@@ -1,3 +1,10 @@
+# [2.10.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.9.0...v2.10.0) (2024-03-19)
+
+
+### Features
+
+* bump biome to 1.6.1 ([24541b2](https://github.com/soliantconsulting/create-koa-api/commit/24541b29e3f32a84f23b43645738697fe8f6758c))
+
 # [2.9.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.8.6...v2.9.0) (2024-03-10)
 
 
