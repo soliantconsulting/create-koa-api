@@ -1,3 +1,10 @@
+# [2.11.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.10.0...v2.11.0) (2024-03-20)
+
+
+### Features
+
+* tweak some CDK settings for rds and the ecs container ([11ebfcc](https://github.com/soliantconsulting/create-koa-api/commit/11ebfcc8266ef166305542aae6ef27774d54b5e8))
+
 # [2.10.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.9.0...v2.10.0) (2024-03-19)
 
 
