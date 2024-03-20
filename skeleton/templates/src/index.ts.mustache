@@ -1,6 +1,5 @@
 import * as zlib from "zlib";
 import cors from "@koa/cors";
-import { isHttpError } from "http-errors";
 import gracefulShutdown from "http-graceful-shutdown";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
@@ -17,7 +16,6 @@ import { appConfigHandler } from "./app-config/handler.js";
 import { registerRoutes } from "./route/index.js";
 import { orm, requestContextMiddleware } from "./util/mikro-orm.js";
 import { logger } from "./util/winston.js";
-import { ZodValidationError } from "./util/zod.js";
 {{#if (has features "appconfig")}}
 
 const appConfigStartResult = await appConfigHandler.start();
