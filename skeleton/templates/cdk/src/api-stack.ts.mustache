@@ -1,6 +1,7 @@
 import { fileURLToPath } from "url";
 import { Duration, Stack, type StackProps } from "aws-cdk-lib";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+import { SslPolicy } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import {
     type CfnVPCCidrBlock,
     InstanceClass,
@@ -67,6 +68,8 @@ export class ApiStack extends Stack {
                 enablePerformanceInsights: true,
             }),
             defaultDatabaseName: "api",
+            storageEncrypted: true,
+            readers: [],
             backup: {
                 retention: Duration.days(21),
                 // 1am to 2am west coast, 4am to 5am east coast
@@ -162,8 +165,11 @@ export class ApiStack extends Stack {
             assignPublicIp: true,
             publicLoadBalancer: true,
             healthCheckGracePeriod: Duration.seconds(10),
+            sslPolicy: SslPolicy.RECOMMENDED_TLS,
         });
 
+        albService.loadBalancer.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
+        albService.loadBalancer.setAttribute('routing.http.desync_mitigation_mode', 'defensive');
 {{#if (has features "postgres")}}
         albService.service.connections.allowToDefaultPort(databaseCluster.connections);
         databaseCluster.secret.grantRead(albService.taskDefinition.taskRole);
