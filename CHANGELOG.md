@@ -1,3 +1,10 @@
+# [2.13.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.12.0...v2.13.0) (2024-05-01)
+
+
+### Features
+
+* **skeleton:** bump koa-jsonapi-zod to 3.1.0 ([62a5c63](https://github.com/soliantconsulting/create-koa-api/commit/62a5c635aff6e696c833767f29a592426197a784))
+
 # [2.12.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.11.0...v2.12.0) (2024-04-22)
 
 
