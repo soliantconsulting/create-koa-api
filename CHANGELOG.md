@@ -1,3 +1,10 @@
+## [2.13.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.13.0...v2.13.1) (2024-05-03)
+
+
+### Bug Fixes
+
+* remove unused imports ([e7ee335](https://github.com/soliantconsulting/create-koa-api/commit/e7ee33529fe20ddc9170fa79434848797f3e8bf0))
+
 # [2.13.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.12.0...v2.13.0) (2024-05-01)
 
 
