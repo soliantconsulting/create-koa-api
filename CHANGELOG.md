@@ -1,3 +1,10 @@
+## [2.13.2](https://github.com/soliantconsulting/create-koa-api/compare/v2.13.1...v2.13.2) (2024-05-03)
+
+
+### Bug Fixes
+
+* add condiational around AppConfig import in cdk ([e2cf3ce](https://github.com/soliantconsulting/create-koa-api/commit/e2cf3ce437d038f5dbe8dc1170e44d7795236c38))
+
 ## [2.13.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.13.0...v2.13.1) (2024-05-03)
 
 
