@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { rm } from "fs/promises";
+import { rm } from "node:fs/promises";
 import meow from "meow";
 import "source-map-support/register.js";
 import { synthProject } from "./synth.js";

@@ -1,4 +1,4 @@
-import { fileURLToPath } from "url";
+import { fileURLToPath } from "node:url";
 import { Duration, Resource } from "aws-cdk-lib";
 import {
     CfnApplication,

@@ -87,7 +87,7 @@ export default (async (): Promise<Options> => {
 
         postgresConfig = {
             host: hostname,
-            port: parseInt(port, 10),
+            port: Number.parseInt(port, 10),
             user: secret.username,
             password: secret.password,
             dbName: secret.dbname,

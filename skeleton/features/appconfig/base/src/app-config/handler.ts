@@ -1,6 +1,6 @@
+import { readFile } from "node:fs/promises";
 import { AppConfigData } from "@aws-sdk/client-appconfigdata";
 import { type ConfigStore, type Outcome, Poller } from "aws-appconfig-poller";
-import { readFile } from "fs/promises";
 import { parse } from "smol-toml";
 import { type AppConfig, appConfigSchema } from "./schema.js";
 

@@ -15,9 +15,6 @@
         "mikro-orm": "tsx ./node_modules/@mikro-orm/cli/esm"
     },
     "mikro-orm": {
-        "configPaths": [
-            "./src/mikro-orm.config.ts",
-            "./mikro-orm.config.js"
-        ]
+        "configPaths": ["./src/mikro-orm.config.ts", "./mikro-orm.config.js"]
     }
 }
