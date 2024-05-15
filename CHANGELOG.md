@@ -1,3 +1,10 @@
+# [2.14.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.13.2...v2.14.0) (2024-05-15)
+
+
+### Features
+
+* bump dependencies ([a585f91](https://github.com/soliantconsulting/create-koa-api/commit/a585f91328fa8f0ff9e3a434d9688fafb1a250ac))
+
 ## [2.13.2](https://github.com/soliantconsulting/create-koa-api/compare/v2.13.1...v2.13.2) (2024-05-03)
 
 
