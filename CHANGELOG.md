@@ -1,3 +1,10 @@
+## [2.14.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.14.0...v2.14.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* **postgres:** update to supported postgres engine version and remove invalid PGSSLMODE env variable ([31a721c](https://github.com/soliantconsulting/create-koa-api/commit/31a721c3a18fb6e68418de463b7972bb0278a1fb))
+
 # [2.14.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.13.2...v2.14.0) (2024-05-15)
 
 
