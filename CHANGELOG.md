@@ -1,3 +1,10 @@
+# [2.15.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.14.1...v2.15.0) (2024-08-29)
+
+
+### Features
+
+* refactor koa API structure and add zoom error notifications ([3e1e0d3](https://github.com/soliantconsulting/create-koa-api/commit/3e1e0d374ee48c2ccb5eed0ba4beeef2e14ece51))
+
 ## [2.14.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.14.0...v2.14.1) (2024-05-17)
 
 
