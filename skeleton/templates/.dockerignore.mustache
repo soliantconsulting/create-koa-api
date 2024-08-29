@@ -1,0 +1,17 @@
+# Ignore everything but root build resources by default
+*
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!packages
+
+# Default per-package ignores
+**/node_modules
+**/dist
+packages/*
+
+# Allow specific packages
+!packages/api
+{{#if (has features "appconfig")}}
+!packages/app-config
+{{/if}}

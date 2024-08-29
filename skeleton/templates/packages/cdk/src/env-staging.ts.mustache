@@ -1,0 +1,18 @@
+import { App } from "aws-cdk-lib";
+import { ApiStack } from "./api-stack.js";
+
+const app = new App();
+
+new ApiStack(app, "{{{apiName}}}-staging", {
+    env: {
+        account: "{{{accountId}}}",
+        region: "{{{region}}}",
+    },
+    apiEnv: "staging",
+    certificateArn: "{{{stagingCertificateArn}}}",
+{{#if (has features "zoom_error_log_notifications")}}
+    zoomWebhookSecretArn: "{{{zoomWebhook.stagingSecretArn}}}",
+{{/if}}
+});
+
+app.synth();

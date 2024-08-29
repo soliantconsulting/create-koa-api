@@ -37,8 +37,12 @@ await synthProject(
         region: "us-east-1",
         deployRoleArn: "arn://unknown",
         apiName: "koa-api-test",
-        features: ["postgres", "appconfig"],
+        features: ["postgres", "appconfig", "zoom_error_log_notifications"],
         stagingCertificateArn: "arn://unknown",
+        zoomWebhook: {
+            stagingSecretArn: "arn://staging-unknown",
+            productionSecretArn: "arn://production-unknown",
+        },
     },
     process.stdout,
     false,

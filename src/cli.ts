@@ -4,6 +4,7 @@ import { stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ACM, CertificateStatus } from "@aws-sdk/client-acm";
+import { SecretsManager } from "@aws-sdk/client-secrets-manager";
 import { STS } from "@aws-sdk/client-sts";
 import type { GetCallerIdentityResponse } from "@aws-sdk/client-sts/dist-types/models/models_0.js";
 import { ListrEnquirerPromptAdapter } from "@listr2/prompt-adapter-enquirer";
@@ -13,6 +14,7 @@ import { Listr, ListrLogLevels, ListrLogger } from "listr2";
 import meow from "meow";
 import semver from "semver/preload.js";
 import "source-map-support/register.js";
+import invariant from "tiny-invariant";
 import { BitBucketClient } from "./bitbucket.js";
 import { type Feature, synthProject } from "./synth.js";
 import { execute } from "./util.js";
@@ -53,6 +55,10 @@ type Context = {
     region: string;
     features: Feature[];
     stagingCertificateArn: string;
+    zoomWebhook?: {
+        stagingSecretArn: string;
+        productionSecretArn: string;
+    };
     repositoryUuid: string;
     projectPath: string;
 };
@@ -152,9 +158,15 @@ const tasks = new Listr<Context>(
                     type: "multiselect",
                     message: "Features:",
                     choices: [
+                        {
+                            message: "Zoom Error Log Notifications",
+                            name: "zoom_error_log_notifications",
+                        },
                         { message: "Aurora Postgres", name: "postgres" },
                         { message: "AppConfig", name: "appconfig" },
                     ],
+                    // @ts-expect-error invalid typing
+                    initial: ["zoom_error_log_notifications"],
                 });
             },
         },
@@ -208,6 +220,57 @@ const tasks = new Listr<Context>(
                             name: certificate.CertificateArn,
                         })),
                     });
+            },
+        },
+        {
+            title: "Setup Zoom Error Log Notifications",
+            skip: (context) => !context.features.includes("zoom_error_log_notifications"),
+            task: async (context, task): Promise<void> => {
+                const prompt = task.prompt(ListrEnquirerPromptAdapter);
+
+                const stagingEndpointPrompt = await prompt.run<string>({
+                    type: "input",
+                    message: "Staging endpoint:",
+                });
+                const stagingVerificationTokenPrompt = await prompt.run<string>({
+                    type: "password",
+                    message: "Staging verification token:",
+                });
+                const productionEndpointPrompt = await prompt.run<string>({
+                    type: "input",
+                    message: "Production endpoint:",
+                });
+                const productionVerificationTokenPrompt = await prompt.run<string>({
+                    type: "password",
+                    message: "Production verification token:",
+                });
+
+                const secretsManager = new SecretsManager({ region: context.region });
+
+                const stagingSecret = await secretsManager.createSecret({
+                    ForceOverwriteReplicaSecret: true,
+                    Name: `${context.apiName}-staging-zoom-webhook`,
+                    SecretString: JSON.stringify({
+                        endpointUrl: stagingEndpointPrompt,
+                        verificationToken: stagingVerificationTokenPrompt,
+                    }),
+                });
+                invariant(stagingSecret.ARN);
+
+                const productionSecret = await secretsManager.createSecret({
+                    ForceOverwriteReplicaSecret: true,
+                    Name: `${context.apiName}-production-zoom-webhook`,
+                    SecretString: JSON.stringify({
+                        endpointUrl: productionEndpointPrompt,
+                        verificationToken: productionVerificationTokenPrompt,
+                    }),
+                });
+                invariant(productionSecret.ARN);
+
+                context.zoomWebhook = {
+                    stagingSecretArn: stagingSecret.ARN,
+                    productionSecretArn: productionSecret.ARN,
+                };
             },
         },
         {

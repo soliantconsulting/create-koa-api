@@ -1,0 +1,19 @@
+{
+    "name": "cdk",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "typecheck": "tsc --noEmit"
+    },
+    "devDependencies": {
+        "@tsconfig/node20": "^20.1.2",
+        "@types/node": "^20.11.4",
+        "aws-cdk": "^2.121.1"
+    },
+    "dependencies": {
+        "aws-cdk-lib": "^2.121.1",
+        "constructs": "^10.3.0",
+        "undent": "^0.1.0"
+    }
+}

@@ -1,46 +1,19 @@
 image: node:20
 
 definitions:
-  services:
-    docker:
-      image: docker:dind
   caches:
-    pnpm:
-      key:
-        files:
-          - pnpm-lock.yaml
-          - cdk/pnpm-lock.yaml
-      path: $BITBUCKET_CLONE_DIR/.pnpm-store
-    buildkit:
-      key:
-        files:
-          - Dockerfile
-          - package.json
-          - pnpm-lock.yaml
-      path: $HOME/.buildkit-cache
+    pnpm: $BITBUCKET_CLONE_DIR/.pnpm-store
   steps:
-    - step: &biome
-        name: Biome
+    - step: &check
+        name: Check
         runs-on:
           - 'self.hosted'
           - 'linux'
         script:
           - corepack enable
-          - corepack prepare pnpm@latest-8 --activate
           - pnpm install
           - pnpm exec biome ci .
-        caches:
-          - pnpm
-    - step: &type-check-api
-        name: Type check API
-        runs-on:
-          - 'self.hosted'
-          - 'linux'
-        script:
-          - corepack enable
-          - corepack prepare pnpm@latest-8 --activate
-          - pnpm install
-          - pnpm exec tsc --noEmit
+          - pnpm exec typecheck
         caches:
           - pnpm
     - step: &deploy
@@ -52,7 +25,7 @@ definitions:
           - docker
         caches:
           - pnpm
-          - buildkit
+          - docker
         script:
           # Configure OIDC
           - export AWS_REGION={{{region}}}
@@ -61,44 +34,16 @@ definitions:
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
           # Install dependencies
           - corepack enable
-          - corepack prepare pnpm@latest-8 --activate
           - pnpm install
-          - cd cdk
-          - pnpm install
-          # Install buildx
-          - export DOCKER_BUILDKIT=1
-          - export DOCKER_CLI_EXPERIMENTAL=enabled
-          - export BUILDX_VERSION=0.12.1
-          - curl -fsSLO https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION}/buildx-v${BUILDX_VERSION}.linux-amd64
-          - mkdir -p $HOME/.docker/cli-plugins/ && mv buildx-v${BUILDX_VERSION}.linux-amd64 $HOME/.docker/cli-plugins/docker-buildx && chmod +x ~/.docker/cli-plugins/docker-buildx
-          - docker buildx install
-          - docker buildx create --use
           # Deploy with CDK
-          - export BUILDKIT_CACHE_PATH="$HOME/.buildkit-cache"
+          - cd packages/cdk
+          - pnpm build
           - pnpm exec cdk deploy --app dist/env-$BITBUCKET_DEPLOYMENT_ENVIRONMENT.js --require-approval never
 
 pipelines:
   branches:
     main:
-      - parallel:
-          steps:
-            - step: *biome
-            - step: *type-check-api
-            - step:
-                name: Build CDK
-                runs-on:
-                  - 'self.hosted'
-                  - 'linux'
-                script:
-                  - corepack enable
-                  - corepack prepare pnpm@latest-8 --activate
-                  - cd cdk
-                  - CI=true pnpm install
-                  - pnpm build
-                caches:
-                  - pnpm
-                artifacts:
-                  - cdk/dist/**
+      - step: *check
       - step:
           <<: *deploy
           name: Deploy Staging
@@ -110,20 +55,4 @@ pipelines:
           trigger: manual
   pull-requests:
     '**':
-      - parallel:
-          steps:
-            - step: *biome
-            - step: *type-check-api
-            - step:
-                name: Type check CDK
-                runs-on:
-                  - 'self.hosted'
-                  - 'linux'
-                script:
-                  - corepack enable
-                  - corepack prepare pnpm@latest-8 --activate
-                  - cd cdk
-                  - CI=true pnpm install
-                  - pnpm exec tsc --noEmit
-                caches:
-                  - pnpm
+      - step: *check

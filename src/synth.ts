@@ -12,7 +12,7 @@ Handlebars.registerHelper("has", (selectedFeatures: Feature[], ...rest) => {
     return selectedFeatures.some((feature) => features.includes(feature));
 });
 
-export type Feature = "appconfig" | "postgres";
+export type Feature = "appconfig" | "postgres" | "zoom_error_log_notifications";
 
 export type ProjectConfig = {
     accountId: string;
@@ -21,6 +21,10 @@ export type ProjectConfig = {
     apiName: string;
     features: Feature[];
     stagingCertificateArn: string;
+    zoomWebhook?: {
+        stagingSecretArn: string;
+        productionSecretArn: string;
+    };
 };
 
 type ProjectContext = {
@@ -60,13 +64,13 @@ const orderDeps = (deps: Record<string, string>): Record<string, string> => {
 };
 
 type EnableFeatureResult = Readonly<{
-    packageJson: PackageJson;
-    tsConfig: TSConfig;
+    apiPackageJson: PackageJson;
+    apiTsConfig: TSConfig;
 }>;
 
 const enableFeature = async (
     context: ProjectContext,
-    name: string,
+    name: Feature,
 ): Promise<EnableFeatureResult> => {
     await cp(path.join(context.skeletonPath, `features/${name}/base`), context.projectPath, {
         recursive: true,
@@ -74,8 +78,12 @@ const enableFeature = async (
     });
 
     return {
-        packageJson: await loadPackageJson(path.join(context.skeletonPath, `features/${name}`)),
-        tsConfig: await loadTsConfig(path.join(context.skeletonPath, `features/${name}`)),
+        apiPackageJson: await loadPackageJson(
+            path.join(context.skeletonPath, `features/${name}/base/packages/api`),
+        ),
+        apiTsConfig: await loadTsConfig(
+            path.join(context.skeletonPath, `features/${name}/base/packages/api`),
+        ),
     };
 };
 
@@ -108,33 +116,33 @@ export const synthProject = async (
 
     await cp(path.join(context.skeletonPath, "base"), projectPath, { recursive: true });
     await copyTemplates(context, config);
-    let packageJson = merge(
+    let apiPackageJson = merge(
         { name: config.apiName } as PackageJson,
-        await loadPackageJson(context.skeletonPath),
+        await loadPackageJson(`${context.skeletonPath}/base/packages/api`),
     );
-    let tsConfig = await loadTsConfig(context.skeletonPath);
+    let apiTsConfig = await loadTsConfig(`${context.skeletonPath}/base/packages/api`);
 
     for (const feature of config.features) {
         const enableFeatureResult = await enableFeature(context, feature);
-        packageJson = merge(packageJson, enableFeatureResult.packageJson);
-        tsConfig = merge(tsConfig, enableFeatureResult.tsConfig);
+        apiPackageJson = merge(apiPackageJson, enableFeatureResult.apiPackageJson);
+        apiTsConfig = merge(apiTsConfig, enableFeatureResult.apiTsConfig);
     }
 
-    if (packageJson.dependencies) {
-        packageJson.dependencies = orderDeps(packageJson.dependencies);
+    if (apiPackageJson.dependencies) {
+        apiPackageJson.dependencies = orderDeps(apiPackageJson.dependencies);
     }
 
-    if (packageJson.devDependencies) {
-        packageJson.devDependencies = orderDeps(packageJson.devDependencies);
+    if (apiPackageJson.devDependencies) {
+        apiPackageJson.devDependencies = orderDeps(apiPackageJson.devDependencies);
     }
 
     await writeFile(
-        path.join(projectPath, "package.json"),
-        JSON.stringify(packageJson, undefined, 4),
+        path.join(projectPath, "packages/api/package.json"),
+        JSON.stringify(apiPackageJson, undefined, 4),
     );
     await writeFile(
-        path.join(projectPath, "tsconfig.json"),
-        JSON.stringify(tsConfig, undefined, 4),
+        path.join(projectPath, "packages/api/tsconfig.json"),
+        JSON.stringify(apiTsConfig, undefined, 4),
     );
 
     const rmExtPaths = await glob(path.join(projectPath, "**/*.rm-ext"), { dot: true });
@@ -144,12 +152,30 @@ export const synthProject = async (
         await rename(rmExtPath, newPath);
     }
 
+    const packageJsonPaths = await glob(path.join(projectPath, "**/package.json"));
+
+    for (const packageJsonPath of packageJsonPaths) {
+        const json = await readFile(packageJsonPath, { encoding: "utf-8" });
+        const packageJson = JSON.parse(json) as PackageJson;
+        packageJson.name = `@${config.apiName}/${packageJson.name}`;
+        await writeFile(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
+    }
+
     await execute(context.stdout, "pnpm", ["install"], { cwd: projectPath });
-    await execute(context.stdout, "pnpm", ["exec", "biome", "check", ".", "--apply"], {
-        cwd: projectPath,
+    await execute(context.stdout, "pnpm", ["check"], { cwd: projectPath });
+
+    if (config.features.includes("appconfig")) {
+        await execute(
+            context.stdout,
+            "pnpm",
+            ["add", `@${config.apiName}/app-config@workspace:*`],
+            { cwd: path.join(projectPath, "packages/api") },
+        );
+    }
+
+    await execute(context.stdout, "pnpm", ["run", "build"], {
+        cwd: path.join(projectPath, "packages/cdk"),
     });
-    await execute(context.stdout, "pnpm", ["install"], { cwd: path.join(projectPath, "cdk") });
-    await execute(context.stdout, "pnpm", ["run", "build"], { cwd: path.join(projectPath, "cdk") });
 
     if (synthCdk) {
         await execute(
