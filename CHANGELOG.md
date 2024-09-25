@@ -1,3 +1,10 @@
+## [2.15.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.15.0...v2.15.1) (2024-09-25)
+
+
+### Bug Fixes
+
+* fixed app-config ([2f382cd](https://github.com/soliantconsulting/create-koa-api/commit/2f382cd8ce74e318806c08b6c5f4f12f821f6fca))
+
 # [2.15.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.14.1...v2.15.0) (2024-08-29)
 
 
