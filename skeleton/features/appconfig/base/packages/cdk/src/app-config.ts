@@ -35,10 +35,10 @@ export class AppConfig extends Construct {
             timeout: Duration.seconds(5),
             memorySize: 512,
             handler: "main",
-            projectRoot: fileURLToPath(new URL("../../", import.meta.url)),
-            depsLockFilePath: fileURLToPath(new URL("../../pnpm-lock.yaml", import.meta.url)),
+            projectRoot: fileURLToPath(new URL("../../../", import.meta.url)),
+            depsLockFilePath: fileURLToPath(new URL("../../../pnpm-lock.yaml", import.meta.url)),
             entry: fileURLToPath(
-                new URL("../../src/app-config/lambda-validator.ts", import.meta.url),
+                new URL("../../app-config/src/lambda-validator.ts", import.meta.url),
             ),
             bundling: {
                 minify: true,
