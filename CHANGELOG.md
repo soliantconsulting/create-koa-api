@@ -1,3 +1,11 @@
+## [2.15.2](https://github.com/soliantconsulting/create-koa-api/compare/v2.15.1...v2.15.2) (2024-10-10)
+
+
+### Bug Fixes
+
+* **template:** change middleware order and add missing request logger middleware ([7442a85](https://github.com/soliantconsulting/create-koa-api/commit/7442a85473bd3ec57a5f88c3f5fcecf5fe716a3c))
+* **template:** correctly exclude node modules and dist within packages ([636f086](https://github.com/soliantconsulting/create-koa-api/commit/636f086e23cf600f949491696c38ca97f5afbd4f))
+
 ## [2.15.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.15.0...v2.15.1) (2024-09-25)
 
 
