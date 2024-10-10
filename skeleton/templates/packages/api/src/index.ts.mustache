@@ -26,6 +26,16 @@ if (appConfigStartResult.error) {
 
 const app = new Koa();
 
+app.use(async (context, next) => {
+    if (context.url === "/health") {
+        context.body = { status: "alive" };
+        return;
+    }
+
+    return next();
+});
+
+app.use(requestLoggerMiddleware);
 app.use(cacheControl({ noStore: true }));
 app.use(
     compress({
@@ -49,14 +59,6 @@ app.use(
 );
 app.use(bodyParser());
 
-app.use(async (context, next) => {
-    if (context.url === "/health") {
-        context.body = { status: "alive" };
-        return;
-    }
-
-    return next();
-});
 {{#if (has features "postgres")}}
 
 app.use(requestContextMiddleware);

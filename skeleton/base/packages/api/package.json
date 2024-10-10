@@ -11,11 +11,11 @@
         "@types/koa-cache-control": "^2.0.5",
         "@types/koa-compress": "^4.0.6",
         "@types/koa__cors": "^5.0.0",
-        "@types/node": "^20.16.2"
+        "@types/node": "^20.16.11"
     },
     "dependencies": {
         "@koa/cors": "^5.0.0",
-        "body-parser": "^1.20.2",
+        "body-parser": "^1.20.3",
         "compression": "^1.7.4",
         "cors": "^2.8.5",
         "dotenv": "^16.4.5",
@@ -26,9 +26,9 @@
         "koa-bodyparser": "^4.4.1",
         "koa-cache-control": "^2.0.0",
         "koa-compress": "^5.1.1",
-        "koa-jsonapi-zod": "^3.2.3",
+        "koa-jsonapi-zod": "^3.2.4",
         "koa-tree-router": "^0.12.1",
-        "logforth": "^1.1.4",
+        "logforth": "^1.2.2",
         "nanoid": "^5.0.7",
         "zod": "^3.23.8",
         "zod-joda": "^1.1.3"
