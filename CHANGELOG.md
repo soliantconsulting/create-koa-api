@@ -1,3 +1,10 @@
+## [2.15.3](https://github.com/soliantconsulting/create-koa-api/compare/v2.15.2...v2.15.3) (2024-10-10)
+
+
+### Bug Fixes
+
+* **template:** reintroduce missing packages unignore ([1a2c87e](https://github.com/soliantconsulting/create-koa-api/commit/1a2c87e7efdf2828f69e88aa511bf537f71db343))
+
 ## [2.15.2](https://github.com/soliantconsulting/create-koa-api/compare/v2.15.1...v2.15.2) (2024-10-10)
 
 
