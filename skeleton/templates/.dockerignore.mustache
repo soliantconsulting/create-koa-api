@@ -3,15 +3,17 @@
 !package.json
 !pnpm-lock.yaml
 !pnpm-workspace.yaml
-!packages
 
-# Default per-package ignores
-**/node_modules
-**/dist
-packages/*
+# Allow specific packages
+!packages/api
+!packages/app-config
 
 # Allow specific packages
 !packages/api
 {{#if (has features "appconfig")}}
 !packages/app-config
 {{/if}}
+
+# Exclude node_modules and dist within allowed packages
+packages/*/node_modules
+packages/*/dist
