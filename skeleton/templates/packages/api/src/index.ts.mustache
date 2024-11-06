@@ -11,7 +11,9 @@ import {
     methodNotAllowedHandler,
 } from "koa-jsonapi-zod";
 import Router from "koa-tree-router";
+{{#if (has features "appconfig")}}
 import { appConfigHandler } from "@{{{apiName}}}/app-config";
+{{/if}}
 import { registerRoutes } from "./route/index.js";
 import { orm, requestContextMiddleware } from "./util/mikro-orm.js";
 import { logger, requestLoggerMiddleware } from "./util/logger.js";
