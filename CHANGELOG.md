@@ -1,3 +1,10 @@
+## [2.15.4](https://github.com/soliantconsulting/create-koa-api/compare/v2.15.3...v2.15.4) (2024-11-06)
+
+
+### Bug Fixes
+
+* update packages to correctly load app config ([3bfd49d](https://github.com/soliantconsulting/create-koa-api/commit/3bfd49dff53b1450c3b4f689ada852fef28082e9))
+
 ## [2.15.3](https://github.com/soliantconsulting/create-koa-api/compare/v2.15.2...v2.15.3) (2024-10-10)
 
 
