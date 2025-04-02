@@ -1,4 +1,4 @@
-FROM node:20-alpine AS build
+FROM public.ecr.aws/docker/library/node:22-alpine AS build
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -18,7 +18,7 @@ COPY . /build
 RUN pnpm -r --filter=api{{#if (has features "appconfig")}} --filter=app-config{{/if}} build
 RUN pnpm deploy --filter=api --prod /prod/api
 
-FROM node:20-alpine AS api
+FROM public.ecr.aws/docker/library/node:22-alpine AS api
 COPY --from=build /prod/api/dist /api
 COPY --from=build /prod/api/package.json /api/
 COPY --from=build /prod/api/node_modules /api/node_modules

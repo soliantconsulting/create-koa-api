@@ -7,9 +7,9 @@
         "typecheck": "tsc --noEmit"
     },
     "devDependencies": {
-        "@aws-sdk/client-secrets-manager": "^3.637.0",
-        "@tsconfig/node20": "^20.1.4",
-        "@types/aws-lambda": "^8.10.145",
-        "@types/node": "^20.16.2"
+        "@aws-sdk/client-secrets-manager": "^3.777.0",
+        "@tsconfig/node22": "^22.0.1",
+        "@types/aws-lambda": "^8.10.148",
+        "@types/node": "^22.13.17"
     }
 }

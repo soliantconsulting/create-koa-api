@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { chmod, cp, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import merge from "deepmerge";
@@ -164,6 +164,8 @@ export const synthProject = async (
     await execute(context.stdout, "pnpm", ["install"], { cwd: projectPath });
     await execute(context.stdout, "pnpm", ["check"], { cwd: projectPath });
 
+    await chmod(path.join(projectPath, "ci-check.sh"), 0o744);
+
     if (config.features.includes("appconfig")) {
         await execute(
             context.stdout,
@@ -178,13 +180,8 @@ export const synthProject = async (
     });
 
     if (synthCdk) {
-        await execute(
-            context.stdout,
-            "pnpm",
-            ["exec", "cdk", "synth", "--app", "dist/env-staging.js"],
-            {
-                cwd: path.join(projectPath, "cdk"),
-            },
-        );
+        await execute(context.stdout, "pnpm", ["cdk", "synth", "--app", "dist/env-staging.js"], {
+            cwd: path.join(projectPath, "cdk"),
+        });
     }
 };

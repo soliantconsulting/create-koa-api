@@ -7,13 +7,13 @@
         "typecheck": "tsc --noEmit"
     },
     "devDependencies": {
-        "@tsconfig/node20": "^20.1.4",
-        "@types/node": "^20.16.11",
-        "aws-cdk": "^2.161.1"
+        "@tsconfig/node22": "^22.0.1",
+        "@types/node": "^22.13.17",
+        "aws-cdk": "^2.1006.0"
     },
     "dependencies": {
-        "aws-cdk-lib": "^2.161.1",
-        "constructs": "^10.3.0",
+        "aws-cdk-lib": "^2.187.0",
+        "constructs": "^10.4.2",
         "undent": "^0.1.0"
     }
 }
