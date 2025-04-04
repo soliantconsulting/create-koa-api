@@ -166,15 +166,6 @@ export const synthProject = async (
 
     await chmod(path.join(projectPath, "ci-check.sh"), 0o744);
 
-    if (config.features.includes("appconfig")) {
-        await execute(
-            context.stdout,
-            "pnpm",
-            ["add", `@${config.apiName}/app-config@workspace:*`],
-            { cwd: path.join(projectPath, "packages/api") },
-        );
-    }
-
     await execute(context.stdout, "pnpm", ["run", "build"], {
         cwd: path.join(projectPath, "packages/cdk"),
     });
