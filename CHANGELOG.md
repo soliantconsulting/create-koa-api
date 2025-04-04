@@ -1,3 +1,10 @@
+## [2.16.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.16.0...v2.16.1) (2025-04-04)
+
+
+### Bug Fixes
+
+* rename packages and approve builds ([fe0ec93](https://github.com/soliantconsulting/create-koa-api/commit/fe0ec93027d454d2c27be36e50ff2cd3f9a15594))
+
 # [2.16.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.15.4...v2.16.0) (2025-04-02)
 
 
