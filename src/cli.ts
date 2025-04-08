@@ -18,12 +18,12 @@ await runPipeline({
     packageName: "@soliantconsulting/create-koa-api",
     tasks: [
         createPnpmVersionTask("10.7.0"),
+        createProjectTask(),
         createAwsEnvTask(),
         createBitbucketRepositoryTask(),
         createDeployRoleTask(),
         stagingDomainTask,
         zoomErrorNotificationsTask,
-        createProjectTask(),
         featuresTask,
         synthTask,
         createGitTask(),
