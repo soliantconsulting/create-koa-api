@@ -1,3 +1,10 @@
+## [2.17.3](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.2...v2.17.3) (2025-04-08)
+
+
+### Bug Fixes
+
+* update starter lib ([764219c](https://github.com/soliantconsulting/create-koa-api/commit/764219cc43687faa52d08cbdf90fe34cce00ce7e))
+
 ## [2.17.2](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.1...v2.17.2) (2025-04-08)
 
 
