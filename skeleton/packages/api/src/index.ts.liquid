@@ -1,0 +1,92 @@
+import * as zlib from "node:zlib";
+import cors from "@koa/cors";
+import gracefulShutdown from "http-graceful-shutdown";
+import Koa from "koa";
+import bodyParser from "koa-bodyparser";
+import cacheControl from "koa-cache-control";
+import compress from "koa-compress";
+import {
+    jsonApiErrorMiddleware,
+    jsonApiRequestMiddleware,
+    methodNotAllowedHandler,
+} from "koa-jsonapi-zod";
+import Router from "koa-tree-router";
+{%- if features contains "app-config" %}
+import { appConfigHandler } from "@{{project.name}}/app-config";
+{%- endif %}
+import { registerRoutes } from "./route/index.js";
+import { orm, requestContextMiddleware } from "./util/mikro-orm.js";
+import { logger, requestLoggerMiddleware } from "./util/logger.js";
+{%- if features contains "app-config" %}
+
+const appConfigStartResult = await appConfigHandler.start();
+
+if (appConfigStartResult.error) {
+    throw appConfigStartResult.error;
+}
+{%- endif %}
+
+const app = new Koa();
+
+app.use(async (context, next) => {
+    if (context.url === "/health") {
+        context.body = { status: "alive" };
+        return;
+    }
+
+    return next();
+});
+
+app.use(requestLoggerMiddleware);
+app.use(cacheControl({ noStore: true }));
+app.use(
+    compress({
+        br: {
+            params: {
+                [zlib.constants.BROTLI_PARAM_QUALITY]: 1,
+            },
+        },
+    }),
+);
+app.use(cors({ maxAge: 86400 }));
+app.use(jsonApiRequestMiddleware());
+app.use(
+    jsonApiErrorMiddleware({
+        logError: (error, exposed) => {
+            if (!exposed) {
+                logger.error("Failed to serve request", { error });
+            }
+        },
+    }),
+);
+app.use(bodyParser());
+
+{% if features contains "postgres" -%}
+app.use(requestContextMiddleware);
+{%- endif %}
+
+const router = new Router({ onMethodNotAllowed: methodNotAllowedHandler });
+registerRoutes(router);
+app.use(router.routes());
+
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const server = app.listen(port, process.env.HOST, () => {
+    logger.info(`Server started on port ${port}`);
+});
+
+{% if features contains "postgres" or features contains "app-config" -%}
+gracefulShutdown(server, {
+    onShutdown: async () => {
+        {%- if features contains "app-config" %}
+        appConfigHandler.stop();
+        {%- endif %}
+        {%- if features contains "postgres" %}
+        await orm.close();
+        {%- endif %}
+    },
+});
+{%- else -%}
+gracefulShutdown(server);
+{%- endif %}
+
+logger.info(`Server started on port ${port}`);

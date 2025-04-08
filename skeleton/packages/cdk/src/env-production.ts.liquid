@@ -1,0 +1,21 @@
+import { App } from "aws-cdk-lib";
+import { ApiStack } from "./api-stack.js";
+
+const app = new App();
+
+throw new Error("Production env not configured");
+
+// biome-ignore lint/correctness/noUnreachable: env not configured
+new ApiStack(app, "{{project.name}}-production", {
+    env: {
+        account: "{{awsEnv.accountId}}",
+        region: "{{awsEnv.region}}",
+    },
+    apiEnv: "production",
+    certificateArn: "",
+    {%- if zoomErrorNotifications %}
+    zoomWebhookSecretArn: "{{zoomErrorNotifications.productionSecretArn}}",
+    {%- endif %}
+});
+
+app.synth();

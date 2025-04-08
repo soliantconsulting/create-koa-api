@@ -1,0 +1,181 @@
+import { fileURLToPath } from "node:url";
+import { Duration, Stack, type StackProps } from "aws-cdk-lib";
+import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+import { SslPolicy } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
+import {
+    type CfnVPCCidrBlock,
+    InstanceClass,
+    InstanceSize,
+    InstanceType,
+    IpProtocol,
+    SubnetType,
+    Vpc,
+} from "aws-cdk-lib/aws-ec2";
+import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
+import { AwsLogDriver, Cluster, ContainerImage } from "aws-cdk-lib/aws-ecs";
+import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
+import {
+    AuroraPostgresEngineVersion,
+    Credentials,
+    DatabaseCluster,
+    DatabaseClusterEngine,
+} from "aws-cdk-lib/aws-rds";
+import { ClusterInstance } from "aws-cdk-lib/aws-rds";
+import type { Construct } from "constructs";
+{%- if features contains "app-config" %}
+import { AppConfig } from "./app-config.js";
+{%- endif %}
+{%- if zoomErrorNotifications %}
+import { ErrorNotifications } from "./error-notifications.js";
+{%- endif %}
+
+type ApiStackProps = StackProps & {
+    apiEnv: string;
+    certificateArn: string;
+    {%- if zoomErrorNotifications %}
+    zoomWebhookSecretArn: string;
+    {%- endif %}
+};
+
+export class ApiStack extends Stack {
+    public constructor(scope: Construct, id: string, props: ApiStackProps) {
+        super(scope, id, props);
+
+        const vpc = new Vpc(this, "Vpc", {
+            ipProtocol: IpProtocol.DUAL_STACK,
+            natGateways: 0,
+            maxAzs: 2,
+        });
+
+        {% if features contains "postgres" %}
+        const databaseCluster = new DatabaseCluster(this, "Database", {
+            vpc,
+            vpcSubnets: { subnetType: SubnetType.PRIVATE_ISOLATED },
+            engine: DatabaseClusterEngine.auroraPostgres({
+                version: AuroraPostgresEngineVersion.VER_16_1,
+            }),
+            credentials: Credentials.fromGeneratedSecret("api"),
+            writer: ClusterInstance.provisioned("DatabaseWriter", {
+                instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.MEDIUM),
+                autoMinorVersionUpgrade: true,
+                allowMajorVersionUpgrade: true,
+                enablePerformanceInsights: true,
+            }),
+            defaultDatabaseName: "api",
+            storageEncrypted: true,
+            readers: [],
+            backup: {
+                retention: Duration.days(21),
+                // 1am to 2am west coast, 4am to 5am east coast
+                preferredWindow: '09:00-10:00',
+            },
+        });
+
+        if (!databaseCluster.secret) {
+            throw new Error("Database cluster has nio secret attached");
+        }
+        {% endif %}
+
+        {% if features contains "app-config" %}
+        const appConfig = new AppConfig(this, "AppConfig", {
+            name: `{{project.name}}-${props.apiEnv}`,
+        });
+        {% endif %}
+
+        const cluster = new Cluster(this, "Cluster", {
+            vpc,
+        });
+
+        const asset = new DockerImageAsset(this, "App", {
+            directory: fileURLToPath(new URL("../../../", import.meta.url)),
+            target: "api",
+        });
+
+        const certificate = Certificate.fromCertificateArn(
+            this,
+            "Certificate",
+            props.certificateArn,
+        );
+
+        const appLogDriver = new AwsLogDriver({
+            streamPrefix: "app",
+            logRetention: RetentionDays.SIX_MONTHS,
+        });
+
+        const albService = new ApplicationLoadBalancedFargateService(this, "Service", {
+            cluster,
+            cpu: 512,
+            memoryLimitMiB: 1024,
+            taskImageOptions: {
+                containerName: "app",
+                containerPort: 80,
+                image: ContainerImage.fromDockerImageAsset(asset),
+                environment: {
+                    PORT: "80",
+                    {%- if features contains "postgres" %}
+                    POSTGRES_HOSTNAME: databaseCluster.clusterEndpoint.hostname,
+                    POSTGRES_PORT: databaseCluster.clusterEndpoint.port.toString(),
+                    POSTGRES_SECRET: databaseCluster.secret.secretArn,
+                    {%- endif %}
+                    {%- if features contains "app-config" %}
+                    APPCONFIG_APPLICATION_IDENTIFIER: appConfig.applicationId,
+                    APPCONFIG_ENVIRONMENT_IDENTIFIER: appConfig.environmentId,
+                    APPCONFIG_CONFIGURATION_PROFILE_IDENTIFIER: appConfig.configurationProfileId,
+                    {%- endif %}
+                },
+                logDriver: appLogDriver,
+            },
+            certificate: certificate,
+            // As long as there are 11 or less docker instances running in the VPC, assigning public IPs is cheaper
+            // than assigning a NAT gateway. In a large project, consider moving the tasks into a private subnet with
+            // egress instead and enable NAT gateway.
+            taskSubnets: { subnetType: SubnetType.PUBLIC },
+            healthCheck: {
+                command: ['CMD-SHELL', 'busybox wget -O /dev/null -T 5 http://127.0.0.1:80/health || exit 1'],
+                startPeriod: Duration.seconds(10),
+                timeout: Duration.seconds(6),
+                retries: 3,
+                interval: Duration.seconds(30),
+            },
+            enableExecuteCommand: true,
+            assignPublicIp: true,
+            publicLoadBalancer: true,
+            healthCheckGracePeriod: Duration.seconds(10),
+            sslPolicy: SslPolicy.RECOMMENDED_TLS,
+        });
+
+        albService.loadBalancer.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
+        albService.loadBalancer.setAttribute('routing.http.desync_mitigation_mode', 'defensive');
+        {%- if features contains "postgres" %}
+        albService.service.connections.allowToDefaultPort(databaseCluster.connections);
+        databaseCluster.secret.grantRead(albService.taskDefinition.taskRole);
+        {%- endif %}
+        {%- if features contains "app-config" %}
+        appConfig.grantRead(albService.taskDefinition.taskRole);
+        {%- endif %}
+
+        const serviceScaling = albService.service.autoScaleTaskCount({ maxCapacity: 10 });
+        serviceScaling.scaleOnCpuUtilization("ScalingCpu", {
+            targetUtilizationPercent: 60,
+        });
+
+        albService.targetGroup.setAttribute("deregistration_delay.timeout_seconds", "5");
+
+        albService.targetGroup.configureHealthCheck({
+            enabled: true,
+            path: "/health",
+        });
+
+        {% if zoomErrorNotifications %}
+        if (!appLogDriver.logGroup) {
+            throw new Error("Log group has not been bound to log driver");
+        }
+
+        new ErrorNotifications(this, "ErrorNotifications", {
+            logGroup: appLogDriver.logGroup,
+            zoomSecretArn: props.zoomWebhookSecretArn,
+        });
+        {% endif %}
+    }
+}

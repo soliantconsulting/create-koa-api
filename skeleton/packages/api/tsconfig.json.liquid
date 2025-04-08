@@ -5,8 +5,10 @@
         "noImplicitAny": true,
         "sourceMap": true,
         "outDir": "dist"
+        {%- if features contains "postgres" %},
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+        {%- endif %}
     },
-    "include": [
-        "src/**/*"
-    ]
+    "include": ["src/**/*"]
 }

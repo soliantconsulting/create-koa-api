@@ -1,0 +1,64 @@
+# {{project.title}}
+
+Koa API following [JSON:API](https://jsonapi.org/) 1.1 specification.
+
+See [koa-jsonapi-zod](https://github.com/DASPRiD/koa-jsonapi-zod) examples for integration.
+
+## Setup
+
+- `pnpm install`
+{%- if features contains "app-config" %}
+- copy `dev-app-config.toml.dist` to `dev-app-config.toml` and fill out values
+{%- endif %}
+{%- if features contains "postgres" %}
+- `docker compose up -d`
+{%- endif %}
+- `pnpm start`
+{%- if features contains "postgres" %}
+
+## Postgres
+
+Use the MikroORM CLI to create and run migrations:
+
+```bash
+pnpm mikro-orm help
+```
+
+Migrations are automatically applied on application start using an advisory lock. This makes sure that only one
+container will apply the migrations. When creating migrations, make sure that they are **always**
+{%- endif %}
+{%- if features contains "app-config" %}
+
+## AppConfig
+
+This project uses AppConfig for additional configuration parameters. Once an environment is deployed, there will be two
+AppConfig applications available:
+
+- `{{project.name}}-staging`
+- `{{project.name}}-production`
+
+For local development, the file `dev-app-config.toml.dist` and `dev-app-config.toml` should reflect the same config.
+You should store non-sensitive values in the `.dist` file, while secrets should be left blank and filled out when
+cloning the repository.
+
+Within AppConfig and locally, a Zod schema validates the configuration. This schema can be found under `src/app-config`.
+
+### Deployment
+
+During the first deployment of an environment, CloudFormation will hang while you set up the initial configuration. Fill
+in the config in AppConfig for the environment and deploy it. After a few minutes CloudFormation will recognize that the
+service is stable and finish deployment.
+
+When adding configuration on subsequent deployments you should add new values to AppConfig preemptively and deploy the
+new configuration. While this will not give you any validation at that step, it prevents a long CloudFormation run.
+
+### Handling configuration updates
+
+When deploying a new configuration in a running environment, the API will pick up changes within 15 seconds. This means
+that you should treat the configuration as always changing. Use `getAppConfig()` whenever you need to access a
+configuration value and don't store the result.
+
+For configuring objects like clients and such, there is a helper in the `app-config` folder named
+`createConfiguredObjectGetter()`. Refer to its documentation for further details. If you don't need it, you can remove
+its file and its dependency `memize` from this project.
+{%- endif %}
