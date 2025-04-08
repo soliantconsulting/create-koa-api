@@ -1,3 +1,10 @@
+# [2.17.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.16.1...v2.17.0) (2025-04-08)
+
+
+### Features
+
+* use new starter lib ([07a3c3b](https://github.com/soliantconsulting/create-koa-api/commit/07a3c3bcd88c546cfb602e1e094a4492ecbf7e15))
+
 ## [2.16.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.16.0...v2.16.1) (2025-04-04)
 
 
