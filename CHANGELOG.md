@@ -1,3 +1,10 @@
+## [2.17.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.0...v2.17.1) (2025-04-08)
+
+
+### Bug Fixes
+
+* add pnpm override for cloud schema version ([1312b2c](https://github.com/soliantconsulting/create-koa-api/commit/1312b2c774094388ec81438861f9699c1d8db598))
+
 # [2.17.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.16.1...v2.17.0) (2025-04-08)
 
 
