@@ -1,3 +1,10 @@
+## [2.17.2](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.1...v2.17.2) (2025-04-08)
+
+
+### Bug Fixes
+
+* move project task to front ([2fa3992](https://github.com/soliantconsulting/create-koa-api/commit/2fa39920def2f0fccfd79d25b6c8834bcada5cb7))
+
 ## [2.17.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.0...v2.17.1) (2025-04-08)
 
 
