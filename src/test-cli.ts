@@ -5,6 +5,7 @@ import {
     type AwsEnvContext,
     type DeployRoleContext,
     type ProjectContext,
+    createPnpmVersionTask,
     runPipeline,
 } from "@soliantconsulting/starter-lib";
 import type { FeaturesContext } from "./tasks/features.js";
@@ -21,7 +22,7 @@ type BaseContext = ProjectContext &
 
 await runPipeline({
     packageName: "@soliantconsulting/create-koa-api",
-    tasks: [synthTask],
+    tasks: [createPnpmVersionTask("10.0.0"), synthTask],
     baseContext: {
         project: {
             name: "test-synth",

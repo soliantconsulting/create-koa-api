@@ -17,7 +17,7 @@ import { zoomErrorNotificationsTask } from "./tasks/zoom-error-notifications.js"
 await runPipeline({
     packageName: "@soliantconsulting/create-koa-api",
     tasks: [
-        createPnpmVersionTask("10.0.0"),
+        createPnpmVersionTask("10.7.0"),
         createAwsEnvTask(),
         createBitbucketRepositoryTask(),
         createDeployRoleTask(),
