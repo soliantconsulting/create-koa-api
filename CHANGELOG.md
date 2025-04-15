@@ -1,3 +1,10 @@
+## [2.17.4](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.3...v2.17.4) (2025-04-15)
+
+
+### Bug Fixes
+
+* **skeleton:** remove duplicate server start log ([20b258e](https://github.com/soliantconsulting/create-koa-api/commit/20b258e2e42add43d7183e17bff23c940bc82c03))
+
 ## [2.17.3](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.2...v2.17.3) (2025-04-08)
 
 

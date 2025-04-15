@@ -1,6 +1,6 @@
 {
   "name": "@soliantconsulting/create-koa-api",
-  "version": "2.17.3",
+  "version": "2.17.4",
   "description": "Create a Koa API",
   "type": "module",
   "author": "Soliant Consulting",
