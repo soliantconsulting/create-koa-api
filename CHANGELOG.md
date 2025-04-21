@@ -1,3 +1,10 @@
+## [2.17.5](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.4...v2.17.5) (2025-04-21)
+
+
+### Bug Fixes
+
+* **skeleton:** add injectWorkspacePackages to pnpm-workspace.yaml ([eb535fc](https://github.com/soliantconsulting/create-koa-api/commit/eb535fc3bd1f1cd6b0c33010673f28b67785808a))
+
 ## [2.17.4](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.3...v2.17.4) (2025-04-15)
 
 
