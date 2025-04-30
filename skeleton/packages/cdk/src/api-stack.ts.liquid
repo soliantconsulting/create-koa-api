@@ -146,7 +146,7 @@ export class ApiStack extends Stack {
             sslPolicy: SslPolicy.RECOMMENDED_TLS,
             ipAddressType: IpAddressType.DUAL_STACK,
         });
-        
+
         const lbLogsBucket = new Bucket(this, "LBLogsBucket", {
             blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
             minimumTLSVersion: 1.2,
@@ -154,12 +154,13 @@ export class ApiStack extends Stack {
             encryption: BucketEncryption.S3_MANAGED,
             lifecycleRules: [
                 {
-                    expiration: Duration.days(60),
+                    // Setting to something longer then 30 days might make GDPR compliance more complex
+                    expiration: Duration.days(28),
                 },
             ],
-          });
+        });
 
-          albService.loadBalancer.logAccessLogs(lbLogsBucket, "api");
+        albService.loadBalancer.logAccessLogs(lbLogsBucket, "api");
 
         albService.loadBalancer.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
         albService.loadBalancer.setAttribute('routing.http.desync_mitigation_mode', 'defensive');
