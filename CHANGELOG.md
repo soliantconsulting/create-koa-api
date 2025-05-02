@@ -1,3 +1,10 @@
+## [2.18.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.18.0...v2.18.1) (2025-05-02)
+
+
+### Bug Fixes
+
+* **skeleton:** run typecheck via pnpm ([670b5a8](https://github.com/soliantconsulting/create-koa-api/commit/670b5a89bd95c4e7f3bd5c5835b9eccecf50f754))
+
 # [2.18.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.5...v2.18.0) (2025-05-02)
 
 
