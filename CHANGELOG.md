@@ -1,3 +1,15 @@
+# [2.18.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.5...v2.18.0) (2025-05-02)
+
+
+### Bug Fixes
+
+* type check of zoom handler ([d55e756](https://github.com/soliantconsulting/create-koa-api/commit/d55e7566585e3823fea7e16297f1d939d4286617))
+
+
+### Features
+
+* make ALB dual stack and add an access log for the ALB ([1803396](https://github.com/soliantconsulting/create-koa-api/commit/1803396c23de7246f21ac7fb9e018fb648d11132))
+
 ## [2.17.5](https://github.com/soliantconsulting/create-koa-api/compare/v2.17.4...v2.17.5) (2025-04-21)
 
 
