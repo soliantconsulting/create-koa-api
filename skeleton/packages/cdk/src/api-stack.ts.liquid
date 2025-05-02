@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { Duration, Stack, type StackProps } from "aws-cdk-lib";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
-import { SslPolicy } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { IpAddressType, SslPolicy } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import {
     type CfnVPCCidrBlock,
@@ -22,6 +22,7 @@ import {
     DatabaseClusterEngine,
 } from "aws-cdk-lib/aws-rds";
 import { ClusterInstance } from "aws-cdk-lib/aws-rds";
+import { BlockPublicAccess, Bucket, BucketEncryption, HttpMethods } from "aws-cdk-lib/aws-s3";
 import type { Construct } from "constructs";
 {%- if features contains "app-config" %}
 import { AppConfig } from "./app-config.js";
@@ -143,7 +144,23 @@ export class ApiStack extends Stack {
             publicLoadBalancer: true,
             healthCheckGracePeriod: Duration.seconds(10),
             sslPolicy: SslPolicy.RECOMMENDED_TLS,
+            ipAddressType: IpAddressType.DUAL_STACK,
         });
+
+        const lbLogsBucket = new Bucket(this, "LBLogsBucket", {
+            blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+            minimumTLSVersion: 1.2,
+            enforceSSL: true,
+            encryption: BucketEncryption.S3_MANAGED,
+            lifecycleRules: [
+                {
+                    // Setting to something longer then 30 days might make GDPR compliance more complex
+                    expiration: Duration.days(28),
+                },
+            ],
+        });
+
+        albService.loadBalancer.logAccessLogs(lbLogsBucket, "api");
 
         albService.loadBalancer.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
         albService.loadBalancer.setAttribute('routing.http.desync_mitigation_mode', 'defensive');

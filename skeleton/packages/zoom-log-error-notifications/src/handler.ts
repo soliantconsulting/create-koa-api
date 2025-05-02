@@ -106,7 +106,7 @@ export const main = async (event: CloudWatchLogsEvent): Promise<void> => {
         if (
             message?.error &&
             typeof message.error.name === "string" &&
-            message.error.message === "string"
+            typeof message.error.message === "string"
         ) {
             body.push({
                 type: "message",
