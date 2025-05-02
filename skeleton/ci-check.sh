@@ -4,8 +4,7 @@ return_code=0
 
 commands=(
   "pnpm biome ci ."
-  "pnpm tsc --noEmit"
-  "pnpm --dir=./cdk tsc --noEmit"
+  "pnpm typecheck"
 )
 
 for cmd in "${commands[@]}"; do
