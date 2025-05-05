@@ -12,6 +12,9 @@
         "aws-cdk": "^2.1006.0"
     },
     "dependencies": {
+        {%- if zoomErrorNotifications %}
+        "@soliantconsulting/zoom-log-error-notifications": "^1.0.0",
+        {%- endif %}
         "aws-cdk-lib": "^2.187.0",
         "constructs": "^10.4.2",
         "undent": "^0.1.0"

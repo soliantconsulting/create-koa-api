@@ -22,11 +22,6 @@ export const synthTask = createSynthTask(
                 list.push("bitbucket-pipelines.yml.liquid");
             }
 
-            if (!context.zoomErrorNotifications) {
-                list.push("packages/zoom-error-notifications");
-                list.push("packages/cdk/src/error-notifications.ts");
-            }
-
             if (!context.features?.includes("postgres")) {
                 list.push("docker-compose.yml");
                 list.push("packages/api/src/mikro-orm.config.ts");
