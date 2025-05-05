@@ -1,3 +1,10 @@
+# [2.19.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.18.1...v2.19.0) (2025-05-05)
+
+
+### Features
+
+* move zoom log error notification code to external package ([3d67dac](https://github.com/soliantconsulting/create-koa-api/commit/3d67dac44257462e315ca346b727de72a48d0dd4))
+
 ## [2.18.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.18.0...v2.18.1) (2025-05-02)
 
 
