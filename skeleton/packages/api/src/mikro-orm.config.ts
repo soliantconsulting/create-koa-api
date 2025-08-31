@@ -1,9 +1,9 @@
 import { SecretsManager } from "@aws-sdk/client-secrets-manager";
-import { LoadStrategy } from "@mikro-orm/core";
-import { Migrator } from "@mikro-orm/migrations";
-import { type Options, defineConfig } from "@mikro-orm/postgresql";
+import { type Constructor, LoadStrategy } from "@mikro-orm/core";
+import { type MigrationGenerator, Migrator } from "@mikro-orm/migrations";
+import { defineConfig, type Options } from "@mikro-orm/postgresql";
 
-let generator = undefined;
+let generator: Constructor<MigrationGenerator> | undefined;
 
 if (process.env.NODE_ENV !== "production") {
     const { TSMigrationGenerator } = await import("@mikro-orm/migrations");

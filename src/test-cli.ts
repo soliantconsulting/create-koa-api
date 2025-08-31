@@ -3,9 +3,9 @@
 import { fileURLToPath } from "node:url";
 import {
     type AwsEnvContext,
+    createPnpmVersionTask,
     type DeployRoleContext,
     type ProjectContext,
-    createPnpmVersionTask,
     runPipeline,
 } from "@soliantconsulting/starter-lib";
 import type { FeaturesContext } from "./tasks/features.js";
