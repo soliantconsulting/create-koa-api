@@ -1,3 +1,10 @@
+# [2.20.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.19.1...v2.20.0) (2025-08-31)
+
+
+### Features
+
+* use node 24 and temporal ([82871a3](https://github.com/soliantconsulting/create-koa-api/commit/82871a3c73a0eb4372d01900e1f95a16a65c0909))
+
 ## [2.19.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.19.0...v2.19.1) (2025-05-08)
 
 
