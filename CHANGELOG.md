@@ -1,3 +1,10 @@
+## [2.20.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.20.0...v2.20.1) (2025-09-01)
+
+
+### Bug Fixes
+
+* add yml to editorconfig ([0cbdfec](https://github.com/soliantconsulting/create-koa-api/commit/0cbdfec40383f9287708d1aee3d00345101adc44))
+
 # [2.20.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.19.1...v2.20.0) (2025-08-31)
 
 
