@@ -49,11 +49,11 @@
         {%- endif %}
     },
     "scripts": {
-        "start": "tsx watch -C development --import=./src/register-crash-logger.ts ./src/index.ts",
+        "start": "tsx watch -C development --import=./src/register-crash-logger.ts --import=./src/temporal-polyfill.ts ./src/index.ts",
         "typecheck": "tsc --noEmit",
         "build": "tsc"
         {%- if features contains "postgres" %},
-        "mikro-orm": "tsx ./node_modules/@mikro-orm/cli/esm"
+        "mikro-orm": "tsx -C development --import=./src/temporal-polyfill.ts ./node_modules/@mikro-orm/cli/esm"
         {%- endif %}
     }
     {%- if features contains "postgres" %},
