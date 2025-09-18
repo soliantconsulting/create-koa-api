@@ -1,3 +1,10 @@
+## [2.20.2](https://github.com/soliantconsulting/create-koa-api/compare/v2.20.1...v2.20.2) (2025-09-18)
+
+
+### Bug Fixes
+
+* **skeleton:** load temporal polyfill through import statement ([78de1c9](https://github.com/soliantconsulting/create-koa-api/commit/78de1c92d389499889ea0a4dbe84534eca0d63f7))
+
 ## [2.20.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.20.0...v2.20.1) (2025-09-01)
 
 
