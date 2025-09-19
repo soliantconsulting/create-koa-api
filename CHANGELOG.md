@@ -1,3 +1,10 @@
+# [2.21.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.20.2...v2.21.0) (2025-09-19)
+
+
+### Features
+
+* **skeleton:** quiet dotenv ([3b5a827](https://github.com/soliantconsulting/create-koa-api/commit/3b5a8279af77348ec0ec31efe8bfc0d0420ed3db))
+
 ## [2.20.2](https://github.com/soliantconsulting/create-koa-api/compare/v2.20.1...v2.20.2) (2025-09-18)
 
 
