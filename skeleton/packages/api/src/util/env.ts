@@ -28,6 +28,6 @@ const envSchema = z
         },
     }));
 
-config();
+config({ quiet: true });
 
 export const env = envSchema.parse(process.env);
