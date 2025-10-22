@@ -7,10 +7,11 @@ import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { IpAddressType, SslPolicy } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import {
-    type CfnVPCCidrBlock,
+    {%- if features contains "postgres" %}
     InstanceClass,
     InstanceSize,
     InstanceType,
+    {%- endif %}
     IpProtocol,
     SubnetType,
     Vpc,
@@ -18,14 +19,19 @@ import {
 import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
 import { AwsLogDriver, Cluster, ContainerImage } from "aws-cdk-lib/aws-ecs";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
+{%- if features contains "postgres" %}
 import {
     AuroraPostgresEngineVersion,
     Credentials,
     DatabaseCluster,
     DatabaseClusterEngine,
 } from "aws-cdk-lib/aws-rds";
+{%- endif %}
 import { ClusterInstance } from "aws-cdk-lib/aws-rds";
-import { BlockPublicAccess, Bucket, BucketEncryption, HttpMethods } from "aws-cdk-lib/aws-s3";
+import { BlockPublicAccess, Bucket, BucketEncryption } from "aws-cdk-lib/aws-s3";
+{%- if zoomErrorNotifications %}
+import { Secret } from "aws-cdk-lib/aws-secretsmanager";
+{%- endif %}
 import type { Construct } from "constructs";
 {%- if features contains "app-config" %}
 import { AppConfig } from "./app-config.js";

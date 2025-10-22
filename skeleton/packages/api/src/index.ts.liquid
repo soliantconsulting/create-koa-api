@@ -15,7 +15,9 @@ import Router from "koa-tree-router";
 import { appConfigHandler } from "@{{project.name}}/app-config";
 {%- endif %}
 import { registerRoutes } from "./route/index.js";
+{%- if features contains "postgres" %}
 import { orm, requestContextMiddleware } from "./util/mikro-orm.js";
+{%- endif %}
 import { logger, requestLoggerMiddleware } from "./util/logger.js";
 {%- if features contains "app-config" %}
 
