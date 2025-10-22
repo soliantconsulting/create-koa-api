@@ -2,6 +2,10 @@
   "name": "@soliantconsulting/create-koa-api",
   "version": "2.21.0",
   "description": "Create a Koa API",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soliantconsulting/create-koa-api.git"
+  },
   "type": "module",
   "author": "Soliant Consulting",
   "license": "MIT",
