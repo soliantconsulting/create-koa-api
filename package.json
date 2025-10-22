@@ -1,6 +1,6 @@
 {
   "name": "@soliantconsulting/create-koa-api",
-  "version": "2.21.0",
+  "version": "2.21.1",
   "description": "Create a Koa API",
   "repository": {
     "type": "git",

@@ -1,3 +1,11 @@
+## [2.21.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.21.0...v2.21.1) (2025-10-22)
+
+
+### Bug Fixes
+
+* add provenance attestation ([00d8091](https://github.com/soliantconsulting/create-koa-api/commit/00d80916fd88d8285ce6cf4144d256187d0f5357))
+* **skeleton:** make mikro orm releated imports conditional ([487159d](https://github.com/soliantconsulting/create-koa-api/commit/487159dc5e2cc2253564c063ec898023a05ce2d6))
+
 # [2.21.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.20.2...v2.21.0) (2025-09-19)
 
 
