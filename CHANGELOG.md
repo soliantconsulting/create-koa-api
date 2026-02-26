@@ -1,3 +1,10 @@
+# [2.22.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.21.1...v2.22.0) (2026-02-26)
+
+
+### Features
+
+* update appconfig validator and ecs  ([#7](https://github.com/soliantconsulting/create-koa-api/issues/7)) ([7573055](https://github.com/soliantconsulting/create-koa-api/commit/7573055067a58709adf78f916b77e936c8262431))
+
 ## [2.21.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.21.0...v2.21.1) (2025-10-22)
 
 
