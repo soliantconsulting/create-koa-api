@@ -17,11 +17,17 @@ RUN pnpm install
 COPY . /build
 RUN pnpm -r --filter=api{% if features contains "app-config" %} --filter=app-config{% endif %} build
 RUN pnpm deploy --filter=api --prod /prod/api
+{%- if features contains "postgres" %}
+RUN apk add curl ca-certificates
+RUN curl https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/aws-rds-cert." c ".crt"}'
+RUN update-ca-certificates
+{%- endif %}
 
 FROM public.ecr.aws/docker/library/node:24-alpine AS api
 COPY --from=build /prod/api/dist /api
 COPY --from=build /prod/api/package.json /api/
 COPY --from=build /prod/api/node_modules /api/node_modules
+COPY --from=build /etc/ssl /etc/ssl
 WORKDIR /api
 ENV NODE_ENV="production"
-CMD [ "node", "--enable-source-maps", "--import=./register-crash-logger.js", "--import=./temporal-polyfill.js", "./index.js" ]
+CMD [ "node", "--use-openssl-ca", "--enable-source-maps", "--import=./register-crash-logger.js", "--import=./temporal-polyfill.js", "./index.js" ]

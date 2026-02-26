@@ -31,7 +31,7 @@ export class AppConfig extends Construct {
         this.applicationId = application.ref;
 
         const validatorFunction = new NodejsFunction(this, "ValidatorFunction", {
-            runtime: Runtime.NODEJS_20_X,
+            runtime: Runtime.NODEJS_24_X,
             timeout: Duration.seconds(5),
             memorySize: 512,
             handler: "main",

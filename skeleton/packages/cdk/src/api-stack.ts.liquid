@@ -60,11 +60,11 @@ export class ApiStack extends Stack {
             vpc,
             vpcSubnets: { subnetType: SubnetType.PRIVATE_ISOLATED },
             engine: DatabaseClusterEngine.auroraPostgres({
-                version: AuroraPostgresEngineVersion.VER_16_6,
+                version: AuroraPostgresEngineVersion.VER_17_4,
             }),
             credentials: Credentials.fromGeneratedSecret("api"),
             writer: ClusterInstance.provisioned("DatabaseWriter", {
-                instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.MEDIUM),
+                instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MEDIUM),
                 autoMinorVersionUpgrade: true,
                 allowMajorVersionUpgrade: true,
                 enablePerformanceInsights: true,
@@ -124,6 +124,7 @@ export class ApiStack extends Stack {
                     POSTGRES_HOSTNAME: databaseCluster.clusterEndpoint.hostname,
                     POSTGRES_PORT: databaseCluster.clusterEndpoint.port.toString(),
                     POSTGRES_SECRET: databaseCluster.secret.secretArn,
+                    PGSSLMODE: "require",
                     {%- endif %}
                     {%- if features contains "app-config" %}
                     APPCONFIG_APPLICATION_IDENTIFIER: appConfig.applicationId,
