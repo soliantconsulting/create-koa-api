@@ -1,3 +1,10 @@
+## [2.22.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.22.0...v2.22.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* missing quote on cdk package.json.liquid ([2b8ecce](https://github.com/soliantconsulting/create-koa-api/commit/2b8ecce3d984d586d790d12921ee20e995544ed6))
+
 # [2.22.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.21.1...v2.22.0) (2026-02-26)
 
 
