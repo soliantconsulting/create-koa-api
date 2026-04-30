@@ -2,7 +2,7 @@ import * as zlib from "node:zlib";
 import cors from "@koa/cors";
 import gracefulShutdown from "http-graceful-shutdown";
 import Koa from "koa";
-import bodyParser from "koa-bodyparser";
+import { bodyParser } from "@koa/bodyparser";
 import cacheControl from "koa-cache-control";
 import compress from "koa-compress";
 import {
