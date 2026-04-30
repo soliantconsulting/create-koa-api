@@ -1,15 +1,15 @@
 import * as zlib from "node:zlib";
-import cors from "@koa/cors";
-import gracefulShutdown from "http-graceful-shutdown";
-import Koa from "koa";
-import { bodyParser } from "@koa/bodyparser";
-import cacheControl from "koa-cache-control";
-import compress from "koa-compress";
 import {
     jsonApiErrorMiddleware,
     jsonApiRequestMiddleware,
-    methodNotAllowedHandler,
-} from "koa-jsonapi-zod";
+    treeRouterMethodNotAllowedHandler,
+} from "@jsonapi-serde/integration-koa";
+import { bodyParser } from "@koa/bodyparser";
+import cors from "@koa/cors";
+import gracefulShutdown from "http-graceful-shutdown";
+import Koa from "koa";
+import cacheControl from "koa-cache-control";
+import compress from "koa-compress";
 import Router from "koa-tree-router";
 {%- if features contains "app-config" %}
 import { appConfigHandler } from "@{{project.name}}/app-config";
@@ -67,7 +67,11 @@ app.use(bodyParser());
 app.use(requestContextMiddleware);
 {%- endif %}
 
-const router = new Router({ onMethodNotAllowed: methodNotAllowedHandler });
+// Type assertion needed: koa-tree-router still types against @types/koa@2,
+// while @jsonapi-serde/integration-koa expects Koa v3 types. Compatible at runtime.
+const router = new Router({
+    onMethodNotAllowed: treeRouterMethodNotAllowedHandler as unknown as Router.Middleware,
+});
 registerRoutes(router);
 app.use(router.routes());
 

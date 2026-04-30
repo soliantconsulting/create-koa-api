@@ -1,9 +1,9 @@
+import type { Sort } from "@jsonapi-serde/server/request";
 import { type QueryOrderMap, RequestContext } from "@mikro-orm/core";
 import { MikroORM } from "@mikro-orm/postgresql";
 import fnv1a from "@sindresorhus/fnv1a";
 import { unflatten } from "flat";
 import type { Next, ParameterizedContext } from "koa";
-import type { Sort } from "koa-jsonapi-zod";
 
 export const orm = await MikroORM.init();
 export const em = orm.em;
