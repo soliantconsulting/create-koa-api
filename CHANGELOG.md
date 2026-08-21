@@ -1,3 +1,19 @@
+# [3.0.0](https://github.com/soliantconsulting/create-koa-api/compare/v2.22.1...v3.0.0) (2026-08-21)
+
+
+### Features
+
+* replace koa-jsonapi-zod with @jsonapi-serde/integration-koa ([db20f6f](https://github.com/soliantconsulting/create-koa-api/commit/db20f6faa0b169f284c287ce46c79f59dc2ef4a0))
+* upgrade Koa to v3 and replace koa-bodyparser with @koa/bodyparser ([eae0c88](https://github.com/soliantconsulting/create-koa-api/commit/eae0c88a257651fc634c4e7af752f89fc8ed063e))
+
+
+### BREAKING CHANGES
+
+* Generated projects now use Koa v3, which drops
+generator middleware support. All middleware must be async functions.
+The koa-bodyparser dependency is replaced with @koa/bodyparser
+(named export instead of default).
+
 ## [2.22.1](https://github.com/soliantconsulting/create-koa-api/compare/v2.22.0...v2.22.1) (2026-02-27)
 
 
