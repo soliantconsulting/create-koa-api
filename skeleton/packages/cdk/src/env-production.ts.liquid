@@ -13,6 +13,18 @@ new ApiStack(app, "{{project.name}}-production", {
     },
     apiEnv: "production",
     certificateArn: "",
+    // TODO: fill in the production IdP values, CloudFormation rejects empty values
+    jwtValidation: {
+        issuer: "",
+        jwksEndpoint: "",
+        additionalClaims: [
+            {
+                name: {{ jwtValidation.audienceClaim | json }},
+                format: {{ jwtValidation.audienceFormat | json }},
+                values: [],
+            },
+        ],
+    },
     {%- if zoomErrorNotifications %}
     zoomWebhookSecretArn: "{{zoomErrorNotifications.productionSecretArn}}",
     {%- endif %}

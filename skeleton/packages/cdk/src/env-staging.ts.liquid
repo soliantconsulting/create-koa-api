@@ -10,6 +10,17 @@ new ApiStack(app, "{{project.name}}-staging", {
     },
     apiEnv: "staging",
     certificateArn: "{{stagingDomain.certificateArn}}",
+    jwtValidation: {
+        issuer: {{ jwtValidation.issuer | json }},
+        jwksEndpoint: {{ jwtValidation.jwksEndpoint | json }},
+        additionalClaims: [
+            {
+                name: {{ jwtValidation.audienceClaim | json }},
+                format: {{ jwtValidation.audienceFormat | json }},
+                values: {{ jwtValidation.audiences | json }},
+            },
+        ],
+    },
     {%- if zoomErrorNotifications %}
     zoomWebhookSecretArn: "{{zoomErrorNotifications.stagingSecretArn}}",
     {%- endif %}
