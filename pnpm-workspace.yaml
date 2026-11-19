@@ -1,4 +1,7 @@
-onlyBuiltDependencies:
-  - '@biomejs/biome'
-  - esbuild
-  - lefthook
+allowBuilds:
+  esbuild: true
+  lefthook: true
+
+overrides:
+  # starter-lib 2.x depends on listr2 ^10, but its adapter range also admits 4.3+, which requires listr2 ^11.
+  '@listr2/prompt-adapter-enquirer': ~4.2.2

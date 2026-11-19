@@ -10,6 +10,7 @@ import {
     runPipeline,
 } from "@soliantconsulting/starter-lib";
 import { featuresTask } from "./tasks/features.js";
+import { jwtValidationTask } from "./tasks/jwt-validation.js";
 import { stagingDomainTask } from "./tasks/staging-domain.js";
 import { synthTask } from "./tasks/synth.js";
 import { zoomErrorNotificationsTask } from "./tasks/zoom-error-notifications.js";
@@ -23,6 +24,7 @@ await runPipeline({
         createBitbucketRepositoryTask(),
         createDeployRoleTask(),
         stagingDomainTask,
+        jwtValidationTask,
         zoomErrorNotificationsTask,
         featuresTask,
         synthTask,

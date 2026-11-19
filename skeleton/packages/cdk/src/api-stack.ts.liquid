@@ -2,9 +2,15 @@ import { fileURLToPath } from "node:url";
 {%- if zoomErrorNotifications %}
 import { ZoomLogErrorNotifications } from "@soliantconsulting/zoom-log-error-notifications";
 {%- endif %}
-import { Duration, Stack, type StackProps } from "aws-cdk-lib";
+import { Annotations, Duration, Stack, type StackProps } from "aws-cdk-lib";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
-import { IpAddressType, SslPolicy } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import {
+    type CfnListener,
+    IpAddressType,
+    ListenerAction,
+    ListenerCondition,
+    SslPolicy,
+} from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import {
     {%- if features contains "postgres" %}
@@ -13,6 +19,8 @@ import {
     InstanceType,
     {%- endif %}
     IpProtocol,
+    Peer,
+    Port,
     SubnetType,
     Vpc,
 } from "aws-cdk-lib/aws-ec2";
@@ -22,12 +30,12 @@ import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patte
 {%- if features contains "postgres" %}
 import {
     AuroraPostgresEngineVersion,
+    ClusterInstance,
     Credentials,
     DatabaseCluster,
     DatabaseClusterEngine,
 } from "aws-cdk-lib/aws-rds";
 {%- endif %}
-import { ClusterInstance } from "aws-cdk-lib/aws-rds";
 import { BlockPublicAccess, Bucket, BucketEncryption } from "aws-cdk-lib/aws-s3";
 {%- if zoomErrorNotifications %}
 import { Secret } from "aws-cdk-lib/aws-secretsmanager";
@@ -36,10 +44,23 @@ import type { Construct } from "constructs";
 {%- if features contains "app-config" %}
 import { AppConfig } from "./app-config.js";
 {%- endif %}
+import { JwtValidationAction } from "./jwt-validation-action.js";
+
+/**
+ * Paths which are forwarded to the app without JWT validation on the ALB.
+ *
+ * ALB allows at most 5 values per condition.
+ */
+const unauthenticatedPathPatterns = ["/.well-known/*"];
 
 type ApiStackProps = StackProps & {
     apiEnv: string;
     certificateArn: string;
+    jwtValidation: {
+        issuer: string;
+        jwksEndpoint: string;
+        additionalClaims: CfnListener.JwtValidationActionAdditionalClaimProperty[];
+    };
     {%- if zoomErrorNotifications %}
     zoomWebhookSecretArn: string;
     {%- endif %}
@@ -171,6 +192,39 @@ export class ApiStack extends Stack {
 
         albService.loadBalancer.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
         albService.loadBalancer.setAttribute('routing.http.desync_mitigation_mode', 'defensive');
+
+        // Validate JWTs on the ALB before requests reach the app. CORS preflight requests and unauthenticated paths
+        // are forwarded without validation.
+        const forwardToApp = ListenerAction.forward([albService.targetGroup]);
+
+        albService.listener.addAction("Default", {
+            action: new JwtValidationAction(props.jwtValidation, forwardToApp),
+        });
+        Annotations.of(albService.listener).acknowledgeWarning(
+            "@aws-cdk/aws-elbv2:listenerExistingDefaultActionReplaced",
+            "Default forward action is intentionally replaced with JWT validation",
+        );
+
+        albService.listener.addAction("Unauthenticated", {
+            priority: 1,
+            conditions: [ListenerCondition.pathPatterns(unauthenticatedPathPatterns)],
+            action: forwardToApp,
+        });
+
+        // Only actual CORS preflight requests are let through, a bare OPTIONS request still requires a valid JWT.
+        albService.listener.addAction("Preflight", {
+            priority: 2,
+            conditions: [
+                ListenerCondition.httpRequestMethods(["OPTIONS"]),
+                ListenerCondition.httpHeader("Origin", ["?*"]),
+                ListenerCondition.httpHeader("Access-Control-Request-Method", ["?*"]),
+            ],
+            action: forwardToApp,
+        });
+
+        // The ALB needs to fetch the public keys from the JWKS endpoint.
+        albService.loadBalancer.connections.allowToAnyIpv4(Port.tcp(443), "JWKS endpoint");
+        albService.loadBalancer.connections.allowTo(Peer.anyIpv6(), Port.tcp(443), "JWKS endpoint");
         {%- if features contains "postgres" %}
         albService.service.connections.allowToDefaultPort(databaseCluster.connections);
         databaseCluster.secret.grantRead(albService.taskDefinition.taskRole);

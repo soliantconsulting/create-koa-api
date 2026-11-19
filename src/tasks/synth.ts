@@ -18,7 +18,7 @@ export const synthTask = createSynthTask(
             const list: string[] = [];
 
             if (!context.awsEnv) {
-                list.push("cdk");
+                list.push("packages/cdk");
                 list.push("bitbucket-pipelines.yml.liquid");
             }
 

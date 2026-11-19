@@ -9,6 +9,7 @@ import {
     runPipeline,
 } from "@soliantconsulting/starter-lib";
 import type { FeaturesContext } from "./tasks/features.js";
+import type { JwtValidationContext } from "./tasks/jwt-validation.js";
 import type { StagingDomainContext } from "./tasks/staging-domain.js";
 import { synthTask } from "./tasks/synth.js";
 import type { ZoomErrorNotificationsContext } from "./tasks/zoom-error-notifications.js";
@@ -17,6 +18,7 @@ type BaseContext = ProjectContext &
     AwsEnvContext &
     DeployRoleContext &
     FeaturesContext &
+    JwtValidationContext &
     StagingDomainContext &
     ZoomErrorNotificationsContext;
 
@@ -40,6 +42,13 @@ await runPipeline({
             certificateArn: "arn://example",
         },
         features: ["postgres", "app-config"],
+        jwtValidation: {
+            issuer: "https://example.auth0.com/",
+            jwksEndpoint: "https://example.auth0.com/.well-known/jwks.json",
+            audienceClaim: "aud",
+            audienceFormat: "single-string",
+            audiences: ["https://api.example.com"],
+        },
         zoomErrorNotifications: {
             stagingSecretArn: "arn://unknown/staging",
             productionSecretArn: "arn://unknown/production",
