@@ -1,5 +1,10 @@
 packages:
   - packages/*
+# pnpm 11+ reads allowBuilds, older pnpm 10 releases only read onlyBuiltDependencies.
+allowBuilds:
+  '@biomejs/biome': true
+  esbuild: true
+  lefthook: true
 onlyBuiltDependencies:
   - '@biomejs/biome'
   - esbuild
